@@ -415,7 +415,7 @@
             "custom_category": "",
             "dependsOn": "typo3 => 8.7.0-8.7.99\n",
             "disableLocalization": false,
-            "disableVersioning": false,
+            "disableVersioning": true,
             "skipGenerateDocumentationTemplate": false,
             "sourceLanguage": "en",
             "state": "alpha",
@@ -491,7 +491,7 @@
         }
     ],
     "log": {
-        "last_modified": "2017-06-09 02:35",
+        "last_modified": "2017-06-09 02:39",
         "extension_builder_version": "8.6.0",
         "be_user": " (1)"
     }
