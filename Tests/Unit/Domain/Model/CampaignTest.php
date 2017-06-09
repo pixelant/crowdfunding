@@ -102,28 +102,28 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     /**
      * @test
      */
-    public function getStagesReturnsInitialValueForPledging()
+    public function getPledgesReturnsInitialValueForPledging()
     {
         $newObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
         self::assertEquals(
             $newObjectStorage,
-            $this->subject->getStages()
+            $this->subject->getPledges()
         );
     }
 
     /**
      * @test
      */
-    public function setStagesForObjectStorageContainingPledgingSetsStages()
+    public function setPledgesForObjectStorageContainingPledgingSetsPledges()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
-        $objectStorageHoldingExactlyOneStages = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
-        $objectStorageHoldingExactlyOneStages->attach($stage);
-        $this->subject->setStages($objectStorageHoldingExactlyOneStages);
+        $pledge = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
+        $objectStorageHoldingExactlyOnePledges = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $objectStorageHoldingExactlyOnePledges->attach($pledge);
+        $this->subject->setPledges($objectStorageHoldingExactlyOnePledges);
 
         self::assertAttributeEquals(
-            $objectStorageHoldingExactlyOneStages,
-            'stages',
+            $objectStorageHoldingExactlyOnePledges,
+            'pledges',
             $this->subject
         );
     }
@@ -131,35 +131,35 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     /**
      * @test
      */
-    public function addStageToObjectStorageHoldingStages()
+    public function addPledgeToObjectStorageHoldingPledges()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
-        $stagesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
+        $pledge = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
+        $pledgesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
             ->setMethods(['attach'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $stagesObjectStorageMock->expects(self::once())->method('attach')->with(self::equalTo($stage));
-        $this->inject($this->subject, 'stages', $stagesObjectStorageMock);
+        $pledgesObjectStorageMock->expects(self::once())->method('attach')->with(self::equalTo($pledge));
+        $this->inject($this->subject, 'pledges', $pledgesObjectStorageMock);
 
-        $this->subject->addStage($stage);
+        $this->subject->addPledge($pledge);
     }
 
     /**
      * @test
      */
-    public function removeStageFromObjectStorageHoldingStages()
+    public function removePledgeFromObjectStorageHoldingPledges()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
-        $stagesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
+        $pledge = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
+        $pledgesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
             ->setMethods(['detach'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $stagesObjectStorageMock->expects(self::once())->method('detach')->with(self::equalTo($stage));
-        $this->inject($this->subject, 'stages', $stagesObjectStorageMock);
+        $pledgesObjectStorageMock->expects(self::once())->method('detach')->with(self::equalTo($pledge));
+        $this->inject($this->subject, 'pledges', $pledgesObjectStorageMock);
 
-        $this->subject->removeStage($stage);
+        $this->subject->removePledge($pledge);
     }
 
     /**

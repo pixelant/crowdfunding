@@ -16,14 +16,14 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'searchFields' => 'title,description,pledged,stages,goals,backers',
+        'searchFields' => 'title,description,pledged,pledges,goals,backers',
         'iconfile' => 'EXT:crowdfunding/Resources/Public/Icons/tx_crowdfunding_domain_model_campaign.gif'
     ],
     'interface' => [
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, pledged, stages, goals, backers',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, pledged, pledges, goals, backers',
     ],
     'types' => [
-        '1' => ['showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, pledged, stages, goals, backers, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'],
+        '1' => ['showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, title, description, pledged, pledges, goals, backers, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -128,9 +128,9 @@ return [
                 'eval' => 'double2,required'
             ]
         ],
-        'stages' => [
+        'pledges' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_campaign.stages',
+            'label' => 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_campaign.pledges',
             'config' => [
                 'type' => 'inline',
                 'foreign_table' => 'tx_crowdfunding_domain_model_pledging',

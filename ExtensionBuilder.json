@@ -71,8 +71,8 @@
                             "foreignRelationClass": "",
                             "lazyLoading": false,
                             "propertyIsExcludeField": true,
-                            "relationDescription": "Stages",
-                            "relationName": "stages",
+                            "relationDescription": "Pledges",
+                            "relationName": "pledges",
                             "relationType": "zeroToMany",
                             "relationWire": "[wired]",
                             "renderType": "inline",
@@ -491,7 +491,7 @@
         }
     ],
     "log": {
-        "last_modified": "2017-06-09 02:54",
+        "last_modified": "2017-06-09 03:04",
         "extension_builder_version": "8.6.0",
         "be_user": " (1)"
     }

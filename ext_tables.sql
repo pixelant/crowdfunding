@@ -9,7 +9,7 @@ CREATE TABLE tx_crowdfunding_domain_model_campaign (
 	title varchar(255) DEFAULT '' NOT NULL,
 	description text,
 	pledged double(11,2) DEFAULT '0.00' NOT NULL,
-	stages int(11) unsigned DEFAULT '0' NOT NULL,
+	pledges int(11) unsigned DEFAULT '0' NOT NULL,
 	goals int(11) unsigned DEFAULT '0' NOT NULL,
 	backers int(11) unsigned DEFAULT '0' NOT NULL,
 

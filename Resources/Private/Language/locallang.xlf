@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T14:54:22Z" product-name="crowdfunding">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T15:04:00Z" product-name="crowdfunding">
 		<header/>
 		<body>
 			<trans-unit id="tx_crowdfunding_domain_model_campaign">
@@ -15,8 +15,8 @@
 			<trans-unit id="tx_crowdfunding_domain_model_campaign.pledged">
 				<source>Pledged</source>
 			</trans-unit>
-			<trans-unit id="tx_crowdfunding_domain_model_campaign.stages">
-				<source>Stages</source>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.pledges">
+				<source>Pledges</source>
 			</trans-unit>
 			<trans-unit id="tx_crowdfunding_domain_model_campaign.goals">
 				<source>Goals</source>
