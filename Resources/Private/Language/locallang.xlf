@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T07:29:38Z" product-name="crowdfunding">
+		<header/>
+		<body>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign">
+				<source>Campaign</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.description">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.pledged">
+				<source>Pledged</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.stages">
+				<source>Stages</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.goals">
+				<source>Goals</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_stage">
+				<source>Stage</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_stage.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_stage.description">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_stage.amount">
+				<source>Amount</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_goal">
+				<source>Goal</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_goal.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_goal.description">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_goal.amount">
+				<source>Amount</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,14 @@
+{
+    "name": "pixelant/crowdfunding",
+    "type": "typo3-cms-extension",
+    "description": "An extension for Crowdfunding",
+    "author": [],
+    "require": {
+        "typo3/cms-core": "~8.7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pixelant\\Crowdfunding\\": "Classes"
+        }
+    }
+}

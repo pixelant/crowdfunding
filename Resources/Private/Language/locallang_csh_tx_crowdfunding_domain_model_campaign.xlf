@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T07:29:38Z" product-name="crowdfunding">
+		<header/>
+		<body>
+			<trans-unit id="title.description">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="description.description">
+				<source>Description</source>
+			</trans-unit>
+			<trans-unit id="pledged.description">
+				<source>Pledged</source>
+			</trans-unit>
+			<trans-unit id="stages.description">
+				<source>Stages</source>
+			</trans-unit>
+			<trans-unit id="goals.description">
+				<source>Goals</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

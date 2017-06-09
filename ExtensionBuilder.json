@@ -1,0 +1,301 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    188,
+                    57
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": true,
+                    "_default2_new_create": false,
+                    "_default3_edit_update": false,
+                    "_default4_delete": false,
+                    "customActions": []
+                },
+                "name": "Campaign",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": true,
+                    "categorizable": true,
+                    "description": "Campaign",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": true,
+                    "type": "Entity",
+                    "uid": "174758690604"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Title",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "title",
+                            "propertyType": "String",
+                            "uid": "456627942698"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Description",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "description",
+                            "propertyType": "Text",
+                            "uid": "574240108895"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Pledged",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "pledged",
+                            "propertyType": "Float",
+                            "uid": "570142466151"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": [
+                        {
+                            "foreignRelationClass": "",
+                            "lazyLoading": false,
+                            "propertyIsExcludeField": true,
+                            "relationDescription": "Stages",
+                            "relationName": "stages",
+                            "relationType": "zeroToMany",
+                            "relationWire": "[wired]",
+                            "renderType": "inline",
+                            "uid": "1024686098209"
+                        },
+                        {
+                            "foreignRelationClass": "",
+                            "lazyLoading": false,
+                            "propertyIsExcludeField": true,
+                            "relationDescription": "Goals",
+                            "relationName": "goals",
+                            "relationType": "zeroToMany",
+                            "relationWire": "[wired]",
+                            "renderType": "inline",
+                            "uid": "547141897134"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "config": {
+                "position": [
+                    486,
+                    58
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": false,
+                    "_default1_show": false,
+                    "_default2_new_create": false,
+                    "_default3_edit_update": false,
+                    "_default4_delete": false,
+                    "customActions": []
+                },
+                "name": "Stage",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "Stage",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "1414395676381"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Title",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "title",
+                            "propertyType": "String",
+                            "uid": "56951459157"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Description",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "description",
+                            "propertyType": "RichText",
+                            "uid": "690929802459"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Amount",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "amount",
+                            "propertyType": "Float",
+                            "uid": "316223395900"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        },
+        {
+            "config": {
+                "position": [
+                    745,
+                    60
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": false,
+                    "_default1_show": false,
+                    "_default2_new_create": false,
+                    "_default3_edit_update": false,
+                    "_default4_delete": false,
+                    "customActions": []
+                },
+                "name": "Goal",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "Goal",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "213703299982"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Title",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "title",
+                            "propertyType": "String",
+                            "uid": "41625426617"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Description",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "description",
+                            "propertyType": "RichText",
+                            "uid": "911760995964"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "Amount",
+                            "propertyIsExcludeField": false,
+                            "propertyIsRequired": true,
+                            "propertyName": "amount",
+                            "propertyType": "Float",
+                            "uid": "103856735344"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [],
+        "description": "An extension for Crowdfunding",
+        "emConf": {
+            "category": "plugin",
+            "custom_category": "",
+            "dependsOn": "typo3 => 8.7.0-8.7.99\n",
+            "disableLocalization": false,
+            "disableVersioning": false,
+            "skipGenerateDocumentationTemplate": false,
+            "sourceLanguage": "en",
+            "state": "alpha",
+            "targetVersion": "8.6.0-8.6.99",
+            "version": "1.0.0"
+        },
+        "extensionKey": "crowdfunding",
+        "name": "Crowdfunding",
+        "originalExtensionKey": "crowdfunding",
+        "originalVendorName": "Pixelant",
+        "persons": [],
+        "plugins": [
+            {
+                "actions": {
+                    "controllerActionCombinations": "",
+                    "noncacheableActions": "",
+                    "switchableActions": ""
+                },
+                "key": "crowdfunding",
+                "name": "Crowdfunding"
+            }
+        ],
+        "vendorName": "Pixelant"
+    },
+    "wires": [
+        {
+            "src": {
+                "moduleId": 0,
+                "terminal": "relationWire_0",
+                "uid": "1024686098209"
+            },
+            "tgt": {
+                "moduleId": 1,
+                "terminal": "SOURCES",
+                "uid": "1414395676381"
+            }
+        },
+        {
+            "src": {
+                "moduleId": 0,
+                "terminal": "relationWire_1",
+                "uid": "547141897134"
+            },
+            "tgt": {
+                "moduleId": 2,
+                "terminal": "SOURCES",
+                "uid": "213703299982"
+            }
+        }
+    ],
+    "log": {
+        "last_modified": "2017-06-09 07:29",
+        "extension_builder_version": "8.6.0",
+        "be_user": " (1)"
+    }
+}
