@@ -15,7 +15,7 @@ namespace Pixelant\Crowdfunding\Domain\Model;
 /**
  * Stage
  */
-class Stage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Pledging extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
      * Title

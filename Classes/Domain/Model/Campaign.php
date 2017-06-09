@@ -44,7 +44,7 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Stages
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Stage>
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Pledging>
      * @cascade remove
      */
     protected $stages = null;
@@ -56,6 +56,14 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @cascade remove
      */
     protected $goals = null;
+
+    /**
+     * Backers
+     *
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Backer>
+     * @lazy
+     */
+    protected $backers = null;
 
     /**
      * Returns the title
@@ -141,49 +149,7 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->stages = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
         $this->goals = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
-    }
-
-    /**
-     * Adds a Stage
-     *
-     * @param \Pixelant\Crowdfunding\Domain\Model\Stage $stage
-     * @return void
-     */
-    public function addStage(\Pixelant\Crowdfunding\Domain\Model\Stage $stage)
-    {
-        $this->stages->attach($stage);
-    }
-
-    /**
-     * Removes a Stage
-     *
-     * @param \Pixelant\Crowdfunding\Domain\Model\Stage $stageToRemove The Stage to be removed
-     * @return void
-     */
-    public function removeStage(\Pixelant\Crowdfunding\Domain\Model\Stage $stageToRemove)
-    {
-        $this->stages->detach($stageToRemove);
-    }
-
-    /**
-     * Returns the stages
-     *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Stage> $stages
-     */
-    public function getStages()
-    {
-        return $this->stages;
-    }
-
-    /**
-     * Sets the stages
-     *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Stage> $stages
-     * @return void
-     */
-    public function setStages(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $stages)
-    {
-        $this->stages = $stages;
+        $this->backers = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
     }
 
     /**
@@ -227,5 +193,91 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setGoals(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $goals)
     {
         $this->goals = $goals;
+    }
+
+    /**
+     * Adds a Stage
+     *
+     * @param \Pixelant\Crowdfunding\Domain\Model\Pledging $stage
+     * @return void
+     */
+    public function addStage(\Pixelant\Crowdfunding\Domain\Model\Pledging $stage)
+    {
+        $this->stages->attach($stage);
+    }
+
+    /**
+     * Removes a Stage
+     *
+     * @param \Pixelant\Crowdfunding\Domain\Model\Pledging $stageToRemove The Pledging to be removed
+     * @return void
+     */
+    public function removeStage(\Pixelant\Crowdfunding\Domain\Model\Pledging $stageToRemove)
+    {
+        $this->stages->detach($stageToRemove);
+    }
+
+    /**
+     * Returns the stages
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Pledging> stages
+     */
+    public function getStages()
+    {
+        return $this->stages;
+    }
+
+    /**
+     * Sets the stages
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Pledging> $stages
+     * @return void
+     */
+    public function setStages(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $stages)
+    {
+        $this->stages = $stages;
+    }
+
+    /**
+     * Adds a Backer
+     *
+     * @param \Pixelant\Crowdfunding\Domain\Model\Backer $backer
+     * @return void
+     */
+    public function addBacker(\Pixelant\Crowdfunding\Domain\Model\Backer $backer)
+    {
+        $this->backers->attach($backer);
+    }
+
+    /**
+     * Removes a Backer
+     *
+     * @param \Pixelant\Crowdfunding\Domain\Model\Backer $backerToRemove The Backer to be removed
+     * @return void
+     */
+    public function removeBacker(\Pixelant\Crowdfunding\Domain\Model\Backer $backerToRemove)
+    {
+        $this->backers->detach($backerToRemove);
+    }
+
+    /**
+     * Returns the backers
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Backer> $backers
+     */
+    public function getBackers()
+    {
+        return $this->backers;
+    }
+
+    /**
+     * Sets the backers
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Backer> $backers
+     * @return void
+     */
+    public function setBackers(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $backers)
+    {
+        $this->backers = $backers;
     }
 }

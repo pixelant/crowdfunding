@@ -3,14 +3,20 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T14:35:23Z" product-name="crowdfunding">
 		<header/>
 		<body>
-			<trans-unit id="title.description">
-				<source>Title</source>
-			</trans-unit>
-			<trans-unit id="description.description">
-				<source>Description</source>
+			<trans-unit id="reference.description">
+				<source>Reference</source>
 			</trans-unit>
 			<trans-unit id="amount.description">
 				<source>Amount</source>
+			</trans-unit>
+			<trans-unit id="pledging_id.description">
+				<source>Pledging</source>
+			</trans-unit>
+			<trans-unit id="state.description">
+				<source>State</source>
+			</trans-unit>
+			<trans-unit id="status.description">
+				<source>Status</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T07:29:38Z" product-name="crowdfunding">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T14:35:23Z" product-name="crowdfunding">
 		<header/>
 		<body>
 			<trans-unit id="title.description">
@@ -17,6 +17,9 @@
 			</trans-unit>
 			<trans-unit id="goals.description">
 				<source>Goals</source>
+			</trans-unit>
+			<trans-unit id="backers.description">
+				<source>Backers</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -102,7 +102,7 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     /**
      * @test
      */
-    public function getStagesReturnsInitialValueForStage()
+    public function getStagesReturnsInitialValueForPledging()
     {
         $newObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
         self::assertEquals(
@@ -114,9 +114,9 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     /**
      * @test
      */
-    public function setStagesForObjectStorageContainingStageSetsStages()
+    public function setStagesForObjectStorageContainingPledgingSetsStages()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Stage();
+        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
         $objectStorageHoldingExactlyOneStages = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
         $objectStorageHoldingExactlyOneStages->attach($stage);
         $this->subject->setStages($objectStorageHoldingExactlyOneStages);
@@ -133,7 +133,7 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function addStageToObjectStorageHoldingStages()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Stage();
+        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
         $stagesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
             ->setMethods(['attach'])
             ->disableOriginalConstructor()
@@ -150,7 +150,7 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function removeStageFromObjectStorageHoldingStages()
     {
-        $stage = new \Pixelant\Crowdfunding\Domain\Model\Stage();
+        $stage = new \Pixelant\Crowdfunding\Domain\Model\Pledging();
         $stagesObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
             ->setMethods(['detach'])
             ->disableOriginalConstructor()
@@ -223,5 +223,68 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
         $this->inject($this->subject, 'goals', $goalsObjectStorageMock);
 
         $this->subject->removeGoal($goal);
+    }
+
+    /**
+     * @test
+     */
+    public function getBackersReturnsInitialValueForBacker()
+    {
+        $newObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        self::assertEquals(
+            $newObjectStorage,
+            $this->subject->getBackers()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function setBackersForObjectStorageContainingBackerSetsBackers()
+    {
+        $backer = new \Pixelant\Crowdfunding\Domain\Model\Backer();
+        $objectStorageHoldingExactlyOneBackers = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $objectStorageHoldingExactlyOneBackers->attach($backer);
+        $this->subject->setBackers($objectStorageHoldingExactlyOneBackers);
+
+        self::assertAttributeEquals(
+            $objectStorageHoldingExactlyOneBackers,
+            'backers',
+            $this->subject
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function addBackerToObjectStorageHoldingBackers()
+    {
+        $backer = new \Pixelant\Crowdfunding\Domain\Model\Backer();
+        $backersObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
+            ->setMethods(['attach'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $backersObjectStorageMock->expects(self::once())->method('attach')->with(self::equalTo($backer));
+        $this->inject($this->subject, 'backers', $backersObjectStorageMock);
+
+        $this->subject->addBacker($backer);
+    }
+
+    /**
+     * @test
+     */
+    public function removeBackerFromObjectStorageHoldingBackers()
+    {
+        $backer = new \Pixelant\Crowdfunding\Domain\Model\Backer();
+        $backersObjectStorageMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
+            ->setMethods(['detach'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $backersObjectStorageMock->expects(self::once())->method('detach')->with(self::equalTo($backer));
+        $this->inject($this->subject, 'backers', $backersObjectStorageMock);
+
+        $this->subject->removeBacker($backer);
     }
 }

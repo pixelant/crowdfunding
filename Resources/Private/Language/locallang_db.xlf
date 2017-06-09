@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T07:29:38Z" product-name="crowdfunding">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T14:35:23Z" product-name="crowdfunding">
 		<header/>
 		<body>
 			<trans-unit id="tx_crowdfunding_domain_model_campaign">
@@ -21,16 +21,19 @@
 			<trans-unit id="tx_crowdfunding_domain_model_campaign.goals">
 				<source>Goals</source>
 			</trans-unit>
-			<trans-unit id="tx_crowdfunding_domain_model_stage">
-				<source>Stage</source>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.backers">
+				<source>Backers</source>
 			</trans-unit>
-			<trans-unit id="tx_crowdfunding_domain_model_stage.title">
+			<trans-unit id="tx_crowdfunding_domain_model_pledging">
+				<source>Pledging</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_pledging.title">
 				<source>Title</source>
 			</trans-unit>
-			<trans-unit id="tx_crowdfunding_domain_model_stage.description">
+			<trans-unit id="tx_crowdfunding_domain_model_pledging.description">
 				<source>Description</source>
 			</trans-unit>
-			<trans-unit id="tx_crowdfunding_domain_model_stage.amount">
+			<trans-unit id="tx_crowdfunding_domain_model_pledging.amount">
 				<source>Amount</source>
 			</trans-unit>
 			<trans-unit id="tx_crowdfunding_domain_model_goal">
@@ -44,6 +47,36 @@
 			</trans-unit>
 			<trans-unit id="tx_crowdfunding_domain_model_goal.amount">
 				<source>Amount</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_backer">
+				<source>Backer</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_backer.email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_backer.name">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_backer.transactions">
+				<source>Transactions</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction">
+				<source>Transaction</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.reference">
+				<source>Reference</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.amount">
+				<source>Amount</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.pledging_id">
+				<source>Pledging Id</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.state">
+				<source>State</source>
+			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.status">
+				<source>Status</source>
 			</trans-unit>
 		</body>
 	</file>
