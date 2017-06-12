@@ -12,4 +12,12 @@ plugin.tx_crowdfunding_crowdfunding {
         # cat=plugin.tx_crowdfunding_crowdfunding//a; type=string; label=Default storage PID
         storagePid =
     }
+    settings {
+        currencySign = €
+        decimalSeparator = ,
+        thousandsSeparator = 
+        prependCurrency = 0
+        separateCurrency = 1
+        decimals = 0
+    }
 }

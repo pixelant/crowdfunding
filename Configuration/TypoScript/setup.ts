@@ -8,10 +8,6 @@ plugin.tx_crowdfunding_crowdfunding {
         layoutRootPaths.0 = EXT:crowdfunding/Resources/Private/Layouts/
         layoutRootPaths.1 = {$plugin.tx_crowdfunding_crowdfunding.view.layoutRootPath}
     }
-    persistence {
-        storagePid = {$plugin.tx_crowdfunding_crowdfunding.persistence.storagePid}
-        #recursive = 1
-    }
     features {
         #skipDefaultArguments = 1
         # if set to 1, the enable fields are ignored in BE context
@@ -22,8 +18,24 @@ plugin.tx_crowdfunding_crowdfunding {
     mvc {
         #callDefaultActionIfActionCantBeResolved = 1
     }
+    settings {
+        currency {
+            currencySign = {$plugin.tx_crowdfunding_crowdfunding.settings.currencySign}
+            decimalSeparator = {$plugin.tx_crowdfunding_crowdfunding.settings.decimalSeparator}
+            thousandsSeparator = {$plugin.tx_crowdfunding_crowdfunding.settings.thousandsSeparator}
+            prependCurrency = {$plugin.tx_crowdfunding_crowdfunding.settings.prependCurrency}
+            separateCurrency = {$plugin.tx_crowdfunding_crowdfunding.settings.separateCurrency}
+            decimals = {$plugin.tx_crowdfunding_crowdfunding.settings.decimals}
+        }
+    }
 }
 
+plugin.tx_crowdfunding {
+    persistence {
+        storagePid = {$plugin.tx_crowdfunding_crowdfunding.persistence.storagePid}
+        #recursive = 1
+    }
+}
 # these classes are only used in auto-generated templates
 plugin.tx_crowdfunding._CSS_DEFAULT_STYLE (
     textarea.f3-form-error {

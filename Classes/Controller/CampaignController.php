@@ -25,6 +25,16 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected $campaignRepository = null;
 
+    public function initializeAction()
+    {
+        if (empty($this->settings['currency']['thousandsSeparator'])) {
+            $this->settings['currency']['thousandsSeparator'] = ' ';
+        }
+        if (empty($this->settings['currency']['decimalSeparator'])) {
+            $this->settings['currency']['decimalSeparator'] = ' ';
+        }
+    }
+
     /**
      * action list
      *
@@ -33,8 +43,9 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function listAction()
     {
-        $projects = $this->campaignRepository->findAll();
+        $campaigns = $this->campaignRepository->findAll();
         $this->view->assign('campaigns', $campaigns);
+        $this->view->assign('detailPid', $this->getDetailPid());
     }
 
     /**
@@ -46,5 +57,30 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     public function showAction(\Pixelant\Crowdfunding\Domain\Model\Campaign $campaign)
     {
         $this->view->assign('campaign', $campaign);
+        $this->view->assign('listPid', $this->getListPid());
+    }
+
+    /**
+     * get page id to "detail" page
+     * 
+     * @return int
+     */
+    protected function getDetailPid()
+    {
+        $currentId = $GLOBALS['TSFE']->id;
+        $detailPid = (int)$this->settings['detailPid'];
+        return $detailPid > 0 ? $detailPid : $currentId;
+    }
+
+    /**
+     * get page id to "list" page
+     * 
+     * @return int
+     */
+    protected function getListPid()
+    {
+        $currentId = $GLOBALS['TSFE']->id;
+        $listPid = (int)$this->settings['listPid'];
+        return $listPid > 0 ? $listPid : $currentId;
     }
 }

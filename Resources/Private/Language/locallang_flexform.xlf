@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T15:04:00Z" product-name="crowdfunding">
+		<header/>
+		<body>
+			<trans-unit id="flexform.tabSettings">
+				<source>Settings</source>
+			</trans-unit>
+			<trans-unit id="flexform.detailPid">
+				<source>Page id of page to display single campaign</source>
+			</trans-unit>
+			<trans-unit id="flexform.listPid">
+				<source>Page id of page to display list of campaigns</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
