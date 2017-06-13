@@ -27,6 +27,13 @@ plugin.tx_crowdfunding_crowdfunding {
             separateCurrency = {$plugin.tx_crowdfunding_crowdfunding.settings.separateCurrency}
             decimals = {$plugin.tx_crowdfunding_crowdfunding.settings.decimals}
         }
+        stripe {
+            name = {$plugin.tx_crowdfunding_crowdfunding.settings.stripe.name}
+            currency = {$plugin.tx_crowdfunding_crowdfunding.settings.stripe.currency}
+            secretKey = {$plugin.tx_crowdfunding_crowdfunding.settings.stripe.secretKey}
+            publishableKey = {$plugin.tx_crowdfunding_crowdfunding.settings.stripe.publishableKey}
+        }
+        ajaxPageType = {$plugin.tx_crowdfunding_crowdfunding.settings.ajaxPageType}
     }
 }
 
@@ -36,36 +43,38 @@ plugin.tx_crowdfunding {
         #recursive = 1
     }
 }
-# these classes are only used in auto-generated templates
-plugin.tx_crowdfunding._CSS_DEFAULT_STYLE (
-    textarea.f3-form-error {
-        background-color:#FF9F9F;
-        border: 1px #FF0000 solid;
-    }
 
-    input.f3-form-error {
-        background-color:#FF9F9F;
-        border: 1px #FF0000 solid;
-    }
+ajaxPage = PAGE
+ajaxPage {
+	typeNum = {$plugin.tx_crowdfunding_crowdfunding.settings.ajaxPageType}
 
-    .tx-crowdfunding table {
-        border-collapse:separate;
-        border-spacing:10px;
+	config {
+		disableAllHeaderCode = 1
+		additionalHeaders = Content-type:application/json
+		xhtml_cleaning = 0
+		admPanel = 0
+		debug = 0
+		no_cache = 1
+	}
+	10 < tt_content.list.20.crowdfunding_crowdfunding
+    10.switchableControllerActions {
+        Campaign {
+            1 = ajax
+        }
     }
+}
 
-    .tx-crowdfunding table th {
-        font-weight:bold;
-    }
+plugin.tx_floorgulliespurus._CSS_DEFAULT_STYLE >
 
-    .tx-crowdfunding table td {
-        vertical-align:top;
-    }
 
-    .typo3-messages .message-error {
-        color:red;
-    }
 
-    .typo3-messages .message-ok {
-        color:green;
-    }
-)
+page.includeCSS.crowdfunding = EXT:crowdfunding/Resources/Public/Css/styles.css
+#page.includeJSlibs.vue = EXT:floorgullies_purus/Resources/Public/JavaScript/vue.js
+page.includeJSFooter.stripecheckout = https://checkout.stripe.com/checkout.js
+page.includeJSFooter.stripecheckout {
+    external = 1
+    disableCompression = 1
+    excludeFromConcatenation = 1
+}
+page.includeJSFooter.crowdfunding = EXT:crowdfunding/Resources/Public/JavaScript/crowdfunding.js
+#page.includeJSFooter.floorgullies_purus_ui = EXT:floorgullies_purus/Resources/Public/JavaScript/FloorGulliesUI.js

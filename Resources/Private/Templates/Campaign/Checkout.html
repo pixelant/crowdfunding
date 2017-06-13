@@ -1,0 +1,26 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
+
+<f:section name="main">
+
+<f:flashMessages />
+
+<h1>Checkout</h1>
+<p>{f:uri.action(action: 'charge', absolute: 1)}</p>
+
+<form action="{f:uri.action(action: 'charge', absolute: 1)}" method="POST">
+  <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-key="{settings.stripe.publishableKey}"
+    data-amount="50"
+    data-name="Stripe.com"
+    data-description="Widget"
+    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+    data-locale="auto"
+    data-label="Text på knappen"
+    data-zip-code="true">
+  </script>
+</form>
+
+</f:section>
+</html>

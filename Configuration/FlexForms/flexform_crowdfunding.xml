@@ -12,6 +12,24 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
+					<switchableControllerActions>
+						<TCEforms>
+							<label>Select function</label>
+							<config>
+								<type>select</type>
+								<items>
+									<numIndex index="0">
+										<numIndex index="0">List</numIndex>
+										<numIndex index="1">Campaign->list;Campaign->show;Campaign->ajax;</numIndex>
+									</numIndex>
+									<numIndex index="1">
+										<numIndex index="0">Detail</numIndex>
+										<numIndex index="1">Campaign->show;Campaign->list;Campaign->ajax;</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</switchableControllerActions>
 					<!-- PID Single Page -->
 					<settings.detailPid>
 						<TCEforms>

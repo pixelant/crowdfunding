@@ -78,6 +78,12 @@
 			<trans-unit id="tx_crowdfunding_domain_model_transaction.status">
 				<source>Status</source>
 			</trans-unit>
+			<trans-unit id="constants.subcategory.stripe">
+				<source>Stripe API</source>
+			</trans-unit>
+			<trans-unit id="constants.subcategory.currency">
+				<source>Rendering of currency on pages</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

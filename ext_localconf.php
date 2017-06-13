@@ -9,11 +9,11 @@ call_user_func(
             'Pixelant.Crowdfunding',
             'Crowdfunding',
             [
-                'Campaign' => 'list, show'
+                'Campaign' => 'list, show, checkout, charge, ajax'
             ],
             // non-cacheable actions
             [
-                'Campaign' => ''
+                'Campaign' => 'checkout, charge, ajax'
             ]
         );
 

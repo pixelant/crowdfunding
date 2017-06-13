@@ -17,6 +17,7 @@ Otherwise your changes will be overwritten the next time you save the extension 
 <f:flashMessages />
 
 <h1>{campaign.title}</h1>
+jsVariables = {jsVariables}
 <p class="teaser"><f:format.html>{campaign.description}</f:format.html></p>
 <p class="pledged"><f:render partial="Campaign/Currency" arguments="{settings:settings.currency, amount: campaign.pledged}" /></p>
 
@@ -40,11 +41,17 @@ Otherwise your changes will be overwritten the next time you save the extension 
         <dd>
           <f:format.html>{pledge.description}</f:format.html>
           <br>
-          <f:render partial="Campaign/Currency" arguments="{settings: settings.currency, amount: pledge.amount}" />
+          <button 
+            class="btn btn-primary js__pledge"
+            data-pledgeid="{pledge.uid}"
+            data-pledgeamount="{pledge.amount}"
+            data-pledgetitle="{campaign.title} - {pledge.title}">Back with <f:render partial="Campaign/Currency" arguments="{settings: settings.currency, amount: pledge.amount}" /></button>
         </dd>
 			</dl>
 		</f:for>
 </f:if>
+
+<f:link.action action="checkout">Back</f:link.action>
 
 <f:link.action action="list" pageUid="{listPid}">Back to list</f:link.action>
 
