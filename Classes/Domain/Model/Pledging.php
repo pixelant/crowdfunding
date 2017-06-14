@@ -12,6 +12,8 @@ namespace Pixelant\Crowdfunding\Domain\Model;
  *
  ***/
 
+use Pixelant\Crowdfunding\Utility\CrowdfundingUtility;
+
 /**
  * Stage
  */
@@ -40,6 +42,13 @@ class Pledging extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @validate NotEmpty
      */
     protected $amount = 0.0;
+
+    /**
+     * totalBackedAmount
+     *
+     * @var float
+     */
+    protected $totalBackedAmount = null;
 
     /**
      * Returns the title
@@ -102,5 +111,64 @@ class Pledging extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setAmount($amount)
     {
         $this->amount = $amount;
+    }
+
+    /**
+     * Returns the total amount backed for the campaing
+     *
+     * @return float
+     */
+    public function getTotalBackedAmount()
+    {
+        if ($this->totalBackedAmount === null) {
+            $this->totalBackedAmount = 0;
+
+            $queryBuilder =
+                \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    \TYPO3\CMS\Core\Database\ConnectionPool::class
+                )
+                ->getQueryBuilderForTable('tx_crowdfunding_domain_model_transaction');
+
+            $result = $queryBuilder
+                ->addSelectLiteral(
+                    $queryBuilder->expr()->sum('amount', 'totalAmount')
+                )
+                ->from('tx_crowdfunding_domain_model_transaction')
+                ->where(
+                    $queryBuilder->expr()->eq('pledging_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT))
+                )
+                ->groupBy('pledging_id')
+                ->execute()
+                ->fetch();
+
+            if (!empty($result)) {
+                $this->totalBackedAmount = $result['totalAmount'];
+            }
+        }
+        return $this->totalBackedAmount;
+    }
+
+    /**
+     * Returns the total amount backed for the campaing as "currency"
+     *
+     * @return string
+     */
+    public function getTotalBackedAmountAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->getTotalBackedAmount()
+        );
+    }
+
+    /**
+     * Returns the amount as "currency"
+     *
+     * @return string
+     */
+    public function getAmountAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->amount
+        );
     }
 }

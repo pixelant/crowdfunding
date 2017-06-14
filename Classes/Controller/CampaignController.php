@@ -12,6 +12,10 @@ namespace Pixelant\Crowdfunding\Controller;
  *
  ***/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+
 /**
  * CampaignController
  */
@@ -26,6 +30,23 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected $campaignRepository = null;
 
     /**
+     * backerRepository
+     *
+     * @var \Pixelant\Crowdfunding\Domain\Repository\BackerRepository
+     * @inject
+     */
+
+    protected $backerRepository = null;
+
+    /**
+     * transactionRepository
+     *
+     * @var \Pixelant\Crowdfunding\Domain\Repository\TransactionRepository
+     * @inject
+     */
+    protected $transactionRepository = null;
+
+    /**
      * javascript variables
      *
      * @var array
@@ -34,13 +55,6 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
     public function initializeAction()
     {
-        // Replace empty currency settings with spaces
-        if (empty($this->settings['currency']['thousandsSeparator'])) {
-            $this->settings['currency']['thousandsSeparator'] = ' ';
-        }
-        if (empty($this->settings['currency']['decimalSeparator'])) {
-            $this->settings['currency']['decimalSeparator'] = ' ';
-        }
         // Manually set variables for javascript to avoid f.ex. secret settings to get rendered into page
         $this->jsVariables['uriAjax'] = $this->buildUriAjax();
         $this->jsVariables['stripe']['publishableKey'] = $this->settings['stripe']['publishableKey'];
@@ -110,70 +124,133 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function ajaxActionCharge()
     {
-        $token = $_POST['token'];
-        $pledgeId = $_POST['pledgeId'];
         $responseData = array();
-        $arguments = $this->request->getArguments();
-        $responseData['success'] = 1;
-        $responseData['message'] = $arguments;
-        $responseData['token'] = $token;
-        $responseData['pledgeId'] = $pledgeId;
-        return json_encode($responseData);
-    }
-
-    /**
-     * action checkout
-     *
-     * @param Pixelant\Crowdfunding\Domain\Model\Campaign
-     * @return void
-     */
-    public function checkoutAction()
-    {
-        $campaigns = $this->campaignRepository->findAll();
-        $this->view->assign('campaigns', $campaigns);
-        $this->view->assign('detailPid', $this->getDetailPid());
-    }
-
-    /**
-     * action charge
-     *
-     * @param Pixelant\Crowdfunding\Domain\Model\Campaign
-     * @return void
-     */
-    public function chargeAction()
-    {
-        $campaigns = $this->campaignRepository->findAll();
-        $this->view->assign('campaigns', $campaigns);
-        $this->view->assign('detailPid', $this->getDetailPid());
+        $campaign = null;
+        $pledge = null;
+        $campaignId = (int)$_POST['campaignId'];
+        $pledgeId = (int)$_POST['pledgeId'];
         $token  = $_POST['stripeToken'];
+        $email = $token['email'];
+        $status = null;
+        $e = null;
 
-        \Stripe\Stripe::setApiKey($this->settings['stripe']['secretKey']);
+        try {
 
-        $customer = \Stripe\Customer::create([
-            'email' => 'mats@pixelant.se',
-            'source'  => $token
-        ]);
+            $campaign = $this->campaignRepository->findByUid($campaignId);
+            foreach ($campaign->getPledges() as $key => $item) {
+                if ($item->getUid() == $pledgeId) {
+                    $pledge = $item;
+                }
+            }
+            $backer = $this->getBacker($email);
+            $transaction = GeneralUtility::makeInstance(
+                \Pixelant\Crowdfunding\Domain\Model\Transaction::class
+            );
+            $transaction->setReference(json_encode($_POST['stripeToken']));
+            $transaction->setCampaignId($campaign->getUid());
+            $transaction->setPledgingId($pledge->getUid());
+            $transaction->setPid($campaign->getPid());
+            \Stripe\Stripe::setApiKey($this->settings['stripe']['secretKey']);
 
-        $charge = \Stripe\Charge::create([
-            'customer' => $customer->id,
-            'amount'   => 50,
-            'currency' => 'sek'
-        ]);
+            $customer = \Stripe\Customer::create([
+                'email' => $email,
+                'source'  => $token['id']
+            ]);
 
-        
+            $charge = \Stripe\Charge::create([
+                'customer' => $customer->id,
+                'amount'   => $pledge->getAmount() * 100,
+                'currency' => $this->settings['stripe']['currency']
+            ]);
+
+            $status = 1;
+            $responseData['success'] = 1;
+            $responseData['message'] = 'Not finished';
+
+            $transaction->setStatus($status);
+            $transaction->setAmount($pledge->getAmount());
+            $this->transactionRepository->add($transaction);
+            $backer->addTransaction($transaction);
+            $backer->setPid($campaign->getPid());
+            // $this->backerRepository->update($backer);
+            $campaign->addBacker($backer);
+            $this->campaignRepository->update($campaign);
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            $objectManager->get(PersistenceManager::class)->persistAll();
+
+            $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
+            $cacheManager->flushCachesInGroupByTag('pages', 'crowdfunding');
+        } catch(\Exception $e) {
+
+        } catch(\Stripe\Error\InvalidRequest $e) {
+
+        }
         // @TODO: Start of debug, remember to remove when debug is done!
         \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
             array(
                 'details' => array('@' => date('Y-m-d H:i:s'), 'class' => __CLASS__, 'function' => __FUNCTION__, 'file' => __FILE__, 'line' => __LINE__),
+                'campaign' => $campaign,
+                'pledge' => $pledge,
+                'token' => $token,
+                'email' => $email,
+                'backer' => $backer,
+                'transaction' => $transaction,
+                'customer' => $customer,
                 'charge' => $charge,
+                'error' => $e                
             )
             ,date('Y-m-d H:i:s') . ' : ' . __METHOD__ . ' : ' . __LINE__
         );
         // @TODO: End of debug, remember to remove when debug is done!
-        
-        echo '<h1>Successfully charged 50!</h1>';
+
+        // $responseData['token'] = $token;
+        // $responseData['pledgeId'] = $pledgeId;
+
+        return $responseData;
     }
 
+    /**
+     * action ajax campaignNumbers
+     *
+     * @param Pixelant\Crowdfunding\Domain\Model\Campaign
+     * @return void
+     */
+    public function ajaxActionCampaignNumbers()
+    {
+        $campaignId = (int)$_POST['campaignId'];
+        $toString = (int)$_POST['toString'];
+        $message = [];
+
+        try {
+            $campaign = $this->campaignRepository->findByUid($campaignId);
+            if ($campaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign) {
+                if ($toString) {
+                    $message['pledged'] = $campaign->getPledgedAsString();
+                    $message['totalBackedAmount'] = $campaign->getTotalBackedAmountAsString();
+                } else {
+                    $message['pledged'] = $campaign->getPledged();
+                    $message['totalBackedAmount'] = $campaign->getTotalBackedAmount();
+                }
+                $message['backers'] = count($campaign->getBackers());
+
+                foreach ($campaign->getPledges() as $pledge) {
+                    $keyPrefix = 'pledge_' . $pledge->getUid() . '_';
+                    if ($toString) {
+                        $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmountAsString();
+                    } else {
+                        $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmount();
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        $responseData['success'] = $campaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign;
+        $responseData['message'] = $message;
+
+        return $responseData;
+    }
     /**
      * Build base ajax uri
      *
@@ -212,5 +289,25 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $currentId = $GLOBALS['TSFE']->id;
         $listPid = (int)$this->settings['listPid'];
         return $listPid > 0 ? $listPid : $currentId;
+    }
+
+    /**
+     * get "backer" by email, returns first with same email or creates a new
+     * 
+     * @param string $email
+     *
+     * @return \Pixelant\Crowdfunding\Domain\Model\Backer
+     */
+    protected function getBacker($email)
+    {
+        $backer = $this->backerRepository->findOneByEmail($email);
+        if (!$backer instanceof \Pixelant\Crowdfunding\Domain\Model\Backer) {
+            $backer = GeneralUtility::makeInstance(
+                \Pixelant\Crowdfunding\Domain\Model\Backer::class
+            );
+            $backer->setEmail($email);
+            $this->backerRepository->add($backer);
+        }
+        return $backer;
     }
 }

@@ -34,6 +34,13 @@ class Transaction extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $amount = 0.0;
 
     /**
+     * Campaign
+     *
+     * @var int
+     */
+    protected $campaignId = 0;
+
+    /**
      * Pledging
      *
      * @var int
@@ -96,6 +103,27 @@ class Transaction extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setAmount($amount)
     {
         $this->amount = $amount;
+    }
+
+    /**
+     * Returns the campaignId
+     *
+     * @return int $campaignId
+     */
+    public function getCampaignId()
+    {
+        return $this->campaignId;
+    }
+
+    /**
+     * Sets the campaignId
+     *
+     * @param int $campaignId
+     * @return void
+     */
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
     }
 
     /**

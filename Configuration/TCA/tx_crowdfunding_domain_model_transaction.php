@@ -15,10 +15,10 @@ return [
         'iconfile' => 'EXT:crowdfunding/Resources/Public/Icons/tx_crowdfunding_domain_model_transaction.gif'
     ],
     'interface' => [
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, reference, amount, pledging_id, state, status',
+        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, reference, amount, campaign_id, pledging_id, state, status',
     ],
     'types' => [
-        '1' => ['showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, reference, amount, pledging_id, state, status'],
+        '1' => ['showitem' => 'sys_language_uid, l10n_parent, l10n_diffsource, reference, amount, campaign_id, pledging_id, state, status'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -74,6 +74,15 @@ return [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'double2,required'
+            ]
+        ],
+        'campaign_id' => [
+            'exclude' => false,
+            'label' => 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_transaction.campaign_id',
+            'config' => [
+                'type' => 'input',
+                'size' => 4,
+                'eval' => 'int'
             ]
         ],
         'pledging_id' => [

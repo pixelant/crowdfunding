@@ -12,6 +12,8 @@ namespace Pixelant\Crowdfunding\Domain\Model;
  *
  ***/
 
+use Pixelant\Crowdfunding\Utility\CrowdfundingUtility;
+
 /**
  * Project
  */
@@ -64,6 +66,13 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @lazy
      */
     protected $backers = null;
+
+    /**
+     * totalBackedAmount
+     *
+     * @var float
+     */
+    protected $totalBackedAmount = null;
 
     /**
      * Returns the title
@@ -280,4 +289,85 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->pledges = $pledges;
     }
+
+    /**
+     * Returns the total amount backed for the campaing
+     *
+     * @return float
+     */
+    public function getTotalBackedAmount()
+    {
+        if ($this->totalBackedAmount === null) {
+            $this->totalBackedAmount = 0;
+
+            $queryBuilder =
+                \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    \TYPO3\CMS\Core\Database\ConnectionPool::class
+                )
+                ->getQueryBuilderForTable('tx_crowdfunding_domain_model_transaction');
+
+            $result = $queryBuilder
+                ->addSelectLiteral(
+                    $queryBuilder->expr()->sum('amount', 'totalAmount')
+                )
+                ->from('tx_crowdfunding_domain_model_transaction')
+                ->where(
+                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT))
+                )
+                ->groupBy('campaign_id')
+                ->execute()
+                ->fetch();
+
+            if (!empty($result)) {
+                $this->totalBackedAmount = $result['totalAmount'];
+            }
+        }
+        return $this->totalBackedAmount;
+    }
+
+    /**
+     * Returns the total amount backed for the campaing as "currency"
+     *
+     * @return string
+     */
+    public function getTotalBackedAmountAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->getTotalBackedAmount()
+        );
+    }
+
+    /**
+     * Returns the pledged as "currency"
+     *
+     * @return string
+     */
+    public function getPledgedAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->pledged
+        );
+    }
+    
+    /**
+     * Returns the total amount backed for the campaing as "currency"
+     *
+     * @return string
+     */
+    public function getTotalBackedAmountPercent()
+    {
+        $percent = 0;
+        $totalBackedAmount = $this->getTotalBackedAmount();
+
+        if ($totalBackedAmount > 0 && $this->pledged > 0) {
+            if ((int)$totalBackedAmount < (int)$this->pledged){
+                $percent = ($totalBackedAmount / $this->pledged) * 100;
+            } else {
+                $percent = 100;
+            }
+        }
+
+        return number_format($percent, 0);
+    }
+
 }

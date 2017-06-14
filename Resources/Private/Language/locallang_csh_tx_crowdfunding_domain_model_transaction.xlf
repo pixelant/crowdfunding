@@ -12,6 +12,9 @@
 			<trans-unit id="pledging_id.description">
 				<source>Pledging</source>
 			</trans-unit>
+			<trans-unit id="campaign_id.description">
+				<source>Campaign</source>
+			</trans-unit>
 			<trans-unit id="state.description">
 				<source>State</source>
 			</trans-unit>

@@ -17,4 +17,4 @@ namespace Pixelant\Crowdfunding\Domain\Repository;
  */
 class TransactionRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-    }
+}

@@ -17,9 +17,22 @@ Otherwise your changes will be overwritten the next time you save the extension 
 <f:flashMessages />
 
 <h1>{campaign.title}</h1>
+
+<f:comment>
 jsVariables = {jsVariables}
+<p><button class="btn btn-warning js_update-numbers" data-campaignid="{campaign.uid}">TEST</button></p>
+</f:comment>
+
 <p class="teaser"><f:format.html>{campaign.description}</f:format.html></p>
-<p class="pledged"><f:render partial="Campaign/Currency" arguments="{settings:settings.currency, amount: campaign.pledged}" /></p>
+<p class="pledged"><f:translate key="tx_crowdfunding_domain_model_campaign.pledged" />: {campaign.pledgedAsString}</p>
+<p class="totalBacked"><f:translate key="tx_crowdfunding_domain_model_campaign.totalBackedAmount" /> <span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span></p>
+<p class="backers">Updatable backers: <span data-identifier="backers">{campaign.backers->f:count()}</span></p>
+<p><span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span> <f:translate key="label.of" /> {campaign.pledgedAsString} <f:translate key="label.raised" /></p>
+<div class="progress">
+  <div class="progress-bar" role="progressbar" aria-valuenow="{campaign.pledged}" aria-valuemin="0" aria-valuemax="campaign.totalBackedAmount" style="min-width: 2.3em; width: {campaign.totalBackedAmountPercent}%;">
+    {campaign.totalBackedAmountPercent}%
+  </div>
+</div>
 
 <f:if condition="{campaign.goals}">
 		<f:for each="{campaign.goals}" as="goal">
@@ -28,8 +41,9 @@ jsVariables = {jsVariables}
         <dd>
           <f:format.html>{goal.description}</f:format.html>
           <br>
-          <f:render partial="Campaign/Currency" arguments="{settings: settings.currency, amount: goal.amount}" />
+          amount: {goal.amountAsString}
         </dd>
+        <hr>
 			</dl>
 		</f:for>
 </f:if>
@@ -41,17 +55,18 @@ jsVariables = {jsVariables}
         <dd>
           <f:format.html>{pledge.description}</f:format.html>
           <br>
+          <p class="totalBacked">Updatable totalBackedAmount: <span data-identifier="pledge_{pledge.uid}_totalBackedAmount">{pledge.totalBackedAmountAsString}</span></p>
+          <br>
           <button 
             class="btn btn-primary js__pledge"
+            data-campaignid="{campaign.uid}"
             data-pledgeid="{pledge.uid}"
             data-pledgeamount="{pledge.amount}"
-            data-pledgetitle="{campaign.title} - {pledge.title}">Back with <f:render partial="Campaign/Currency" arguments="{settings: settings.currency, amount: pledge.amount}" /></button>
+            data-pledgetitle="{campaign.title} - {pledge.title}">Back with {pledge.amountAsString}</button>
         </dd>
 			</dl>
 		</f:for>
 </f:if>
-
-<f:link.action action="checkout">Back</f:link.action>
 
 <f:link.action action="list" pageUid="{listPid}">Back to list</f:link.action>
 
