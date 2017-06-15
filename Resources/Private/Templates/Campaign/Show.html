@@ -18,57 +18,80 @@ Otherwise your changes will be overwritten the next time you save the extension 
 
 <h1>{campaign.title}</h1>
 
+<div class="row">
+  <f:comment><!-- left column --></f:comment>
+  <div class="col-md-8">
+
+    <p class="teaser"><f:format.html>{campaign.description}</f:format.html></p>
+
+    <f:if condition="{campaign.goals}">
+      <h4><f:translate key="tx_crowdfunding_domain_model_campaign.goals" /></h4>
+      <div class="list-group">
+        <f:for each="{campaign.goals}" as="goal">
+          <f:variable name="goalClass"></f:variable>
+          <f:if condition="{campaign.totalBackedAmount} >= {goal.amount}">
+            <f:variable name="goalClass">list-group-item-success</f:variable>
+          </f:if>
+          <div class="list-group-item {goalClass}">
+            <h4 class="list-group-item-heading">{goal.amountAsString} - {goal.title}</h4>
+            <p class="list-group-item-text"><f:format.html>{goal.description}</f:format.html></p>
+          </div>
+        </f:for>
+      </div>
+    </f:if>
+  </div>
+
+  <f:comment><!-- right column --></f:comment>
+  <div class="col-md-4">
+    <div class="tx-crowdfunding-overview">
+      <dl>
+        <dt><f:translate key="tx_crowdfunding_domain_model_goal" />:</dt>
+        <dd>{campaign.pledgedAsString}</dd>
+
+        <dt><f:translate key="tx_crowdfunding_domain_model_campaign.pledged" />:</dt>
+        <dd>
+          <span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span>
+          &nbsp;(<span data-identifier="totalBackedAmountPercent">{campaign.totalBackedAmountPercent}%</span>)
+        </dd>
+
+        <dt><f:translate key="tx_crowdfunding_domain_model_campaign.backers" />:</dt>
+        <dd><span data-identifier="backers">{campaign.backers->f:count()}</span></dd>
+      </dl>
+
+      <button class="btn btn-warning js_update-numbers" data-campaignid="{campaign.uid}">TEST</button>
+    </div>
+
+    <div class="tx-crowdfunding-pledges">
+      <f:if condition="{campaign.pledges}">
+        <h3><f:translate key="tx_crowdfunding_domain_model_campaign.pledges" /></h3>
+        <div class="list-group">
+          <f:for each="{campaign.pledges}" as="pledge">
+            <div class="list-group-item">
+              <h4 class="list-group-item-heading">{pledge.title}</h4>
+              <p class="list-group-item-text"><f:format.html>{pledge.description}</f:format.html></p>
+              <button 
+                  class="btn btn-primary btn-block js__pledge"
+                  data-campaignid="{campaign.uid}"
+                  data-pledgeid="{pledge.uid}"
+                  data-pledgeamount="{pledge.amount}"
+                  data-pledgeamountstr="{pledge.amountAsString}"
+                  data-pledgetitle="{campaign.title} - {pledge.title}">Back with {pledge.amountAsString}</button>
+            </div>
+          </f:for>
+        </div>
+      </f:if>
+    </div>
+  </div>
+</div>
+
+<f:render partial="Campaign/Modal" />
+
 <f:comment>
 jsVariables = {jsVariables}
 <p><button class="btn btn-warning js_update-numbers" data-campaignid="{campaign.uid}">TEST</button></p>
 </f:comment>
 
-<p class="teaser"><f:format.html>{campaign.description}</f:format.html></p>
-<p class="pledged"><f:translate key="tx_crowdfunding_domain_model_campaign.pledged" />: {campaign.pledgedAsString}</p>
-<p class="totalBacked"><f:translate key="tx_crowdfunding_domain_model_campaign.totalBackedAmount" /> <span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span></p>
-<p class="backers">Updatable backers: <span data-identifier="backers">{campaign.backers->f:count()}</span></p>
-<p><span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span> <f:translate key="label.of" /> {campaign.pledgedAsString} <f:translate key="label.raised" /></p>
-<div class="progress">
-  <div class="progress-bar" role="progressbar" aria-valuenow="{campaign.pledged}" aria-valuemin="0" aria-valuemax="campaign.totalBackedAmount" style="min-width: 2.3em; width: {campaign.totalBackedAmountPercent}%;">
-    {campaign.totalBackedAmountPercent}%
-  </div>
-</div>
-
-<f:if condition="{campaign.goals}">
-		<f:for each="{campaign.goals}" as="goal">
-			<dl>
-				<dt>{goal.title}</dt>
-        <dd>
-          <f:format.html>{goal.description}</f:format.html>
-          <br>
-          amount: {goal.amountAsString}
-        </dd>
-        <hr>
-			</dl>
-		</f:for>
-</f:if>
-
-<f:if condition="{campaign.pledges}">
-		<f:for each="{campaign.pledges}" as="pledge">
-			<dl>
-				<dt>{pledge.title}</dt>
-        <dd>
-          <f:format.html>{pledge.description}</f:format.html>
-          <br>
-          <p class="totalBacked">Updatable totalBackedAmount: <span data-identifier="pledge_{pledge.uid}_totalBackedAmount">{pledge.totalBackedAmountAsString}</span></p>
-          <br>
-          <button 
-            class="btn btn-primary js__pledge"
-            data-campaignid="{campaign.uid}"
-            data-pledgeid="{pledge.uid}"
-            data-pledgeamount="{pledge.amount}"
-            data-pledgetitle="{campaign.title} - {pledge.title}">Back with {pledge.amountAsString}</button>
-        </dd>
-			</dl>
-		</f:for>
-</f:if>
-
-<f:link.action action="list" pageUid="{listPid}">Back to list</f:link.action>
+<f:link.action action="list" pageUid="{listPid}" class="btn btn-default">Back to list</f:link.action>
 
 </f:section>
 </html>

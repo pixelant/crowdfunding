@@ -69,12 +69,12 @@ plugin.tx_floorgulliespurus._CSS_DEFAULT_STYLE >
 
 
 page.includeCSS.crowdfunding = EXT:crowdfunding/Resources/Public/Css/styles.css
-#page.includeJSlibs.vue = EXT:floorgullies_purus/Resources/Public/JavaScript/vue.js
+page.includeCSS.sweetalert = EXT:crowdfunding/Resources/Public/Css/sweetalert.css
 page.includeJSFooter.stripecheckout = https://checkout.stripe.com/checkout.js
 page.includeJSFooter.stripecheckout {
     external = 1
     disableCompression = 1
     excludeFromConcatenation = 1
 }
+page.includeJSFooter.sweetalert = EXT:crowdfunding/Resources/Public/JavaScript/sweetalert.min.js
 page.includeJSFooter.crowdfunding = EXT:crowdfunding/Resources/Public/JavaScript/crowdfunding.js
-#page.includeJSFooter.floorgullies_purus_ui = EXT:floorgullies_purus/Resources/Public/JavaScript/FloorGulliesUI.js

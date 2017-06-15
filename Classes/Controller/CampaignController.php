@@ -120,7 +120,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      * action ajax
      *
      * @param Pixelant\Crowdfunding\Domain\Model\Campaign
-     * @return void
+     * @return array
      */
     public function ajaxActionCharge()
     {
@@ -130,9 +130,16 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $campaignId = (int)$_POST['campaignId'];
         $pledgeId = (int)$_POST['pledgeId'];
         $token  = $_POST['stripeToken'];
+        $amount  = $_POST['amount'];
         $email = $token['email'];
         $status = null;
         $e = null;
+
+        // $responseData['success'] = 0;
+        // $responseData['message'] = 'ajajajaja nu blev det fel Mosa';
+        // return $responseData;
+        // Try to change amount... and it worked anyway...
+        // $amount = $amount * 1.25;
 
         try {
 
@@ -157,15 +164,13 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 'source'  => $token['id']
             ]);
 
+            // TODO: if pledgeid, check if $pledge->getAmount() is less than amount then throw error....
+
             $charge = \Stripe\Charge::create([
                 'customer' => $customer->id,
-                'amount'   => $pledge->getAmount() * 100,
+                'amount'   => $amount * 100,
                 'currency' => $this->settings['stripe']['currency']
             ]);
-
-            $status = 1;
-            $responseData['success'] = 1;
-            $responseData['message'] = 'Not finished';
 
             $transaction->setStatus($status);
             $transaction->setAmount($pledge->getAmount());
@@ -180,11 +185,16 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
             $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
             $cacheManager->flushCachesInGroupByTag('pages', 'crowdfunding');
+            $responseData['success'] = 1;
+            $responseData['message'] = 'Thank you message ... ' . $amount;
         } catch(\Exception $e) {
-
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
         } catch(\Stripe\Error\InvalidRequest $e) {
-
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
         }
+        /*
         // @TODO: Start of debug, remember to remove when debug is done!
         \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
             array(
@@ -197,15 +207,12 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 'transaction' => $transaction,
                 'customer' => $customer,
                 'charge' => $charge,
-                'error' => $e                
+                'error' => $e
             )
             ,date('Y-m-d H:i:s') . ' : ' . __METHOD__ . ' : ' . __LINE__
         );
         // @TODO: End of debug, remember to remove when debug is done!
-
-        // $responseData['token'] = $token;
-        // $responseData['pledgeId'] = $pledgeId;
-
+        */
         return $responseData;
     }
 
@@ -213,7 +220,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      * action ajax campaignNumbers
      *
      * @param Pixelant\Crowdfunding\Domain\Model\Campaign
-     * @return void
+     * @return array
      */
     public function ajaxActionCampaignNumbers()
     {
@@ -232,6 +239,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                     $message['totalBackedAmount'] = $campaign->getTotalBackedAmount();
                 }
                 $message['backers'] = count($campaign->getBackers());
+                $message['totalBackedAmountPercent'] = $campaign->getTotalBackedAmountPercent() . '%';
 
                 foreach ($campaign->getPledges() as $pledge) {
                     $keyPrefix = 'pledge_' . $pledge->getUid() . '_';

@@ -84,21 +84,6 @@
 			<trans-unit id="constants.subcategory.currency">
 				<source>Rendering of currency on pages</source>
 			</trans-unit>
-			<trans-unit id="label.pledged">
-				<source>pledged</source>
-			</trans-unit>
-			<trans-unit id="label.raised">
-				<source>rasied</source>
-			</trans-unit>
-			<trans-unit id="label.backers">
-				<source>backers</source>
-			</trans-unit>
-			<trans-unit id="label.of">
-				<source>of</source>
-			</trans-unit>
-			<trans-unit id="label.by">
-				<source>by</source>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>

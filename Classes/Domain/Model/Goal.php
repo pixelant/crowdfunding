@@ -11,6 +11,7 @@ namespace Pixelant\Crowdfunding\Domain\Model;
  *  (c) 2017
  *
  ***/
+use Pixelant\Crowdfunding\Utility\CrowdfundingUtility;
 
 /**
  * Goal
@@ -102,5 +103,17 @@ class Goal extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setAmount($amount)
     {
         $this->amount = $amount;
+    }
+
+    /**
+     * Returns the amount as "currency"
+     *
+     * @return string
+     */
+    public function getAmountAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->amount
+        );
     }
 }
