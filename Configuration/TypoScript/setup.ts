@@ -41,6 +41,16 @@ plugin.tx_crowdfunding {
     persistence {
         storagePid = {$plugin.tx_crowdfunding_crowdfunding.persistence.storagePid}
         #recursive = 1
+        classes {
+            Pixelant\Crowdfunding\Domain\Model\Campaign {
+                mapping {
+                    tableName = tx_crowdfunding_domain_model_campaign
+                    columns {
+                        crdate.mapOnProperty = crdate
+                    }
+                }
+            }
+        }
     }
 }
 

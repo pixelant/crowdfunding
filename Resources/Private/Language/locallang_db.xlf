@@ -15,6 +15,9 @@
 			<trans-unit id="tx_crowdfunding_domain_model_campaign.pledged">
 				<source>Pledged</source>
 			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_campaign.min_amount">
+				<source>Minimum amount</source>
+			</trans-unit>
 			<trans-unit id="tx_crowdfunding_domain_model_campaign.pledges">
 				<source>Pledges</source>
 			</trans-unit>

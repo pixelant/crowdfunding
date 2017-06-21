@@ -15,6 +15,7 @@ namespace Pixelant\Crowdfunding\Controller;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use Pixelant\Crowdfunding\Utility\CrowdfundingUtility;
 
 /**
  * CampaignController
@@ -132,31 +133,46 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $token  = $_POST['stripeToken'];
         $amount  = $_POST['amount'];
         $email = $token['email'];
+        $checksum = $_POST['checksum'];
         $status = null;
         $e = null;
 
-        // $responseData['success'] = 0;
-        // $responseData['message'] = 'ajajajaja nu blev det fel Mosa';
-        // return $responseData;
-        // Try to change amount... and it worked anyway...
-        // $amount = $amount * 1.25;
-
         try {
-
-            $campaign = $this->campaignRepository->findByUid($campaignId);
-            foreach ($campaign->getPledges() as $key => $item) {
-                if ($item->getUid() == $pledgeId) {
-                    $pledge = $item;
-                }
+            // get campaign
+            $campaign = $this->getCampaign($campaignId);
+            if (!$campaign) {
+                throw new \Exception("Error Processing Request", 1);
             }
+
+            // compare checksums
+            $buildChecksum = $this->getChecksum(
+                $campaignId,
+                $pledgeId,
+                $amount
+            );
+            if ($buildChecksum != $checksum) {
+                throw new \Exception("Checksum mismatch", 1);
+            }
+
+            // fetch pledge if selected
+            $pledge = $this->getCampaignPledge($pledgeId);
+            
+            // find backer
             $backer = $this->getBacker($email);
+
+            // create new transaction
             $transaction = GeneralUtility::makeInstance(
                 \Pixelant\Crowdfunding\Domain\Model\Transaction::class
             );
+            // Set transaction properties
             $transaction->setReference(json_encode($_POST['stripeToken']));
             $transaction->setCampaignId($campaign->getUid());
-            $transaction->setPledgingId($pledge->getUid());
+            if ($pledge) {
+                $transaction->setPledgingId($pledge->getUid());
+            }
             $transaction->setPid($campaign->getPid());
+
+            // Stripe - set
             \Stripe\Stripe::setApiKey($this->settings['stripe']['secretKey']);
 
             $customer = \Stripe\Customer::create([
@@ -169,11 +185,17 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $charge = \Stripe\Charge::create([
                 'customer' => $customer->id,
                 'amount'   => $amount * 100,
-                'currency' => $this->settings['stripe']['currency']
+                'currency' => $this->settings['stripe']['currency'],
+                'description' => $campaign->getTitle(),
+                'metadata' => [
+                    'campaign_id' => $campaign->getUid(),
+                    'pledge_id' => !empty($plegde) ? $pledge->getUid() : 0,
+                    'backer_id' => $backer->getUid()
+                ]
             ]);
 
             $transaction->setStatus($status);
-            $transaction->setAmount($pledge->getAmount());
+            $transaction->setAmount($amount);
             $this->transactionRepository->add($transaction);
             $backer->addTransaction($transaction);
             $backer->setPid($campaign->getPid());
@@ -187,10 +209,10 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $cacheManager->flushCachesInGroupByTag('pages', 'crowdfunding');
             $responseData['success'] = 1;
             $responseData['message'] = 'Thank you message ... ' . $amount;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $responseData['success'] = 0;
             $responseData['message'] = $e->getMessage();
-        } catch(\Stripe\Error\InvalidRequest $e) {
+        } catch (\Stripe\Error\InvalidRequest $e) {
             $responseData['success'] = 0;
             $responseData['message'] = $e->getMessage();
         }
@@ -259,6 +281,57 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
         return $responseData;
     }
+
+    /**
+     * action checksum
+     *
+     * @return array
+     */
+    public function ajaxActionChecksum()
+    {
+        try {
+            $checksum = $this->getChecksum(
+                (int)$_POST['campaignId'],
+                (int)$_POST['pledgeId'],
+                $_POST['amount']
+            );
+            $responseData['success'] = 1;
+            $responseData['message'] = $checksum;
+        } catch (\Exception $e) {
+            $responseData['success'] = 1;
+            $responseData['message'] = $e->getMessage();
+        }
+        return $responseData;
+    }
+
+    /**
+     * action checksum
+     *
+     * @return array
+     */
+    public function ajaxActionIsAmountValid()
+    {
+        $campaignId = (int)$_POST['campaignId'];
+        $campaign = $this->getCampaign($campaignId);
+        $amount = (float)$_POST['amount'];
+        $isAmountValid = false;
+        $message = '';
+        if ($campaign) {
+            if ($amount >= $campaign->getMinAmount()){
+                $isAmountValid = true;
+                $message = CrowdfundingUtility::formatCurrency($amount);
+            } else {
+                $message = 'Minimum amount to back is ' . $campaign->getMinAmount() . '  (' . $amount . ')';
+            }
+        } else {
+            $message = 'Couldn\'t verify if amount is valid, campaign was not found';
+        }
+        return  [
+            'success' => $isAmountValid ? 1 : 0,
+            'message' => $message
+        ];
+    }
+
     /**
      * Build base ajax uri
      *
@@ -317,5 +390,84 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $this->backerRepository->add($backer);
         }
         return $backer;
+    }
+
+    /**
+     * get "campaign" by id, returns campaign or false
+     *
+     * @param int $campaignId
+     *
+     * @return \Pixelant\Crowdfunding\Domain\Model\Campaign|false
+     */
+    protected function getCampaign($campaignId)
+    {
+        $campaign = false;
+        // Find campaign
+        if ($campaignId > 0) {
+            $findCampaign = $this->campaignRepository->findByUid($campaignId);
+            if ($findCampaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign) {
+                $campaign = $findCampaign;
+            }
+        }
+        return $campaign;
+    }
+
+    /**
+     * get campaign pledge by id, returns pledge or false
+     *
+     * @param \Pixelant\Crowdfunding\Domain\Model\Campaign $campaign
+     * @param int $pledgeId
+     *
+     * @return \Pixelant\Crowdfunding\Domain\Model\Pledge|false
+     */
+    protected function getCampaignPledge($campaign, $pledgeId)
+    {
+        $pledge = false;
+        if ($campaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign &&
+            $pledgeId > 0) {
+            $campaignPledges = $campaign->getPledges();
+            foreach ($campaignPledges as $key => $campaignPledge) {
+                if ($campaignPledge->getUid() === $pledgeId) {
+                    $pledge = $campaignPledge;
+                    break;
+                }
+            }
+        }
+        return $pledge;
+    }
+
+    /**
+     * generate checksum
+     *
+     * @param int $campaignId
+     * @param int $pledgeId
+     * @param float $amount
+     *
+     * @return string
+     */
+    protected function getChecksum($campaignId, $pledgeId, $amount)
+    {
+        $campaign = $this->getCampaign($campaignId);
+        $pledge = $this->getCampaignPledge($campaign, $pledgeId);
+        $checksum = '';
+
+        // check if a campaign is found
+        if (!$campaign) {
+            throw new \Exception("Cannot generate checksum without a valid campaign", 1);
+        }
+
+        // check that amount is equal to pledge amount if pledge is set
+        if ($pledge && $amount != $pledge->getAmount()) {
+            throw new \Exception("The specified amount is not equal to amount in selected pledge", 1);
+        }
+
+        // check that amount is greater than campaing min pledgeAmount
+        if ($amount < $campaign->getMinAmount()) {
+            throw new \Exception("The specified amount is smaller than minimum amount set in campaign", 1);
+        }
+
+        $crdate = $campaign->getCrdate();
+        $checksum = $campaignId . '|' . $crdate . '|' . $pledgeId . '|' . $amount;
+        return hash('sha256', $checksum);
     }
 }

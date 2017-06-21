@@ -12,6 +12,9 @@
 			<trans-unit id="pledged.description">
 				<source>Pledged</source>
 			</trans-unit>
+			<trans-unit id="min_amount.description">
+				<source>Minimum amount to back campaing with</source>
+			</trans-unit>
 			<trans-unit id="pledges.description">
 				<source>Pledges</source>
 			</trans-unit>

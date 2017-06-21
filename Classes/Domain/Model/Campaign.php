@@ -44,6 +44,14 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $pledged = 0.0;
 
     /**
+     * MinAmount
+     *
+     * @var float
+     * @validate NotEmpty
+     */
+    protected $minAmount = 0.0;
+
+    /**
      * Pledges
      *
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Pledging>
@@ -73,6 +81,13 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var float
      */
     protected $totalBackedAmount = null;
+
+    /**
+     * crdate
+     *
+     * @var int
+     */
+    protected $crdate;
 
     /**
      * Returns the title
@@ -135,6 +150,27 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setPledged($pledged)
     {
         $this->pledged = $pledged;
+    }
+
+    /**
+     * Returns the minAmount
+     *
+     * @return float $minAmount
+     */
+    public function getMinAmount()
+    {
+        return $this->minAmount;
+    }
+
+    /**
+     * Sets the minAmount
+     *
+     * @param float $minAmount
+     * @return void
+     */
+    public function setMinAmount($minAmount)
+    {
+        $this->minAmount = $minAmount;
     }
 
     /**
@@ -370,4 +406,13 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         return number_format($percent, 0);
     }
 
+    /**
+     * Returns the crdate
+     *
+     * @return int $crdate
+     */
+    public function getCrdate()
+    {
+        return $this->crdate;
+    }
 }
