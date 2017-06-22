@@ -43,4 +43,4 @@ script:
   - >
     echo;
     echo "Running unit tests";
-   composer run php:unittests
+    composer run php:unittests
