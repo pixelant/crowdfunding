@@ -15,6 +15,8 @@
     }
 
     $(document).ready(function() {
+
+        // add click event to pledge buttons 
         $('.js__pledge').each(function() {
             $(this).on('click', function(e) {
                 e.preventDefault();
@@ -25,6 +27,7 @@
                 amountStr = $(this).data('pledgeamountstr');
                 description = $(this).data('pledgetitle');
 
+                // generate checksum
                 $.post(T3.settings.uriAjax, {
                     method: 'checksum',
                     campaignId: campaignId,
@@ -34,9 +37,8 @@
                     if (data.success != 1) {
                         swal('could not generate checksum', 'error');
                     } else {
-                        //callback(checksum);
                         checksum = data.message;
-                        // Open Checkout with further options:
+                        // open stripe checkout
                         handler.open({
                             name: T3.settings.stripe.name,
                             description: description,
@@ -48,26 +50,32 @@
                 }, 'json'
                 ).fail(function(jqXHR, textStatus, errorThrown) {
                     swal('could not generate checksum:' + errorThrown, 'error');
-                });                        
+                });
             });
         });
 
+        // add click event to update numbers button
         $('.js_update-numbers').on('click', function(e) {
             e.preventDefault();
             var campaignId = $(this).data('campaignid');
             updateCampaignNumbers(campaignId);
         });
 
+        // check input on back amount
         $('[data-identifier="backamount"]').on('input', function(e) {
             validateCustomAmount()
         });
 
+        // check enter on back amount
         $('[data-identifier="backamount"]').on('keypress', function(e) {
-            if (validateCustomAmount()) {
-                $('[data-identifier="backcampaign"]').trigger('click');
+            if (e.which === 13) {
+                if (validateCustomAmount()) {
+                    $('[data-identifier="backcampaign"]').trigger('click');
+                }
             }
         });
 
+        // add click event for "free" amount button
         $('[data-identifier="backcampaign"]').on('click', function(e) {
             e.preventDefault();
             var backInput = $('[data-identifier="backamount"]').first();
@@ -86,6 +94,7 @@
                         swal('Amount is not valid!', data.message, 'error');
                     } else {
                         amountStr = data.message;
+                        // generate checksum
                         $.post(T3.settings.uriAjax, {
                             method: 'checksum',
                             campaignId: campaignId,
@@ -95,9 +104,8 @@
                             if (data.success != 1) {
                                 swal('could not generate checksum', 'error');
                             } else {
-                                //callback(checksum);
                                 checksum = data.message;
-                                // Open Checkout with further options:
+                                // open stripe checkout
                                 handler.open({
                                     name: T3.settings.stripe.name,
                                     description: description,
@@ -115,38 +123,13 @@
                 ).fail(function(jqXHR, textStatus, errorThrown) {
                     swal('could not validate amount:' + errorThrown, 'error');
                 });
-            
-                // Generate a checksum
-
-                // stripe open
-
             } else {
                 console.log('else');
             }
-            /*
-            console.log('campaignId : ' + campaignId);
-
-            $.post(T3.settings.uriAjax, {
-                method: 'checksum',
-                campaignId: campaignId,
-                pledgeId: pledgeId,
-                amount: amount
-            }, function(data, textStatus, jqXHR) {
-                if (data.success != 1) {
-                    swal('could not generate checksum', 'error');
-                } else {
-                    //callback(checksum);
-                    checksum = data.message;
-                    swal('backcampaign amount : ' + amount + ', checksum : ' + checksum );
-                }
-            }, 'json'
-            ).fail(function(jqXHR, textStatus, errorThrown) {
-                swal('could not generate checksum:' + errorThrown, 'error');
-            });
-            */
         });
     });
 
+    // handler for stripe chekout
     var handler = StripeCheckout.configure({
         key: T3.settings.stripe.publishableKey,
         image: T3.settings.stripe.image,
@@ -154,12 +137,13 @@
         token: displayConfirmCharge
     });
 
-    // Close Checkout on page navigation:
+    // close checkout on page navigation
     window.addEventListener('popstate', function() {
         resetVars();
         handler.close();
     });
 
+    // display confirm charge swal
     function displayConfirmCharge(token) {
         // Let strip close...
         setTimeout(function(){
@@ -176,6 +160,7 @@
         }, 500);
     }
 
+    // charge
     function doCharge(token) {
         $.post(T3.settings.uriAjax, {
             method: 'charge',
@@ -189,6 +174,7 @@
         ).fail(chargeResponseFailed);
     }
 
+    // handle response from charge
     function chargeResponseProcess(data, textStatus, jqXHR) {
         updateCampaignNumbers(campaignId);
         if (data.success != 1) {
@@ -201,12 +187,14 @@
         resetVars();
     }
 
+    // handle fail of charge
     function chargeResponseFailed(jqXHR, textStatus, errorThrown) {
         // TODO: proper error message
         swal(errorThrown, textStatus, 'error');
         resetVars();
     }
 
+    // reset variables
     function resetVars() {
         campaignId = 0;
         pledgeId = 0;
@@ -216,6 +204,7 @@
         checksum = '';
     }
 
+    // update campaign numbers
     function updateCampaignNumbers(campaignId) {
         $.post(T3.settings.uriAjax, {
             method: 'campaignNumbers',
@@ -223,8 +212,12 @@
             toString: 1
         }, function(data, textStatus, jqXHR) {
             if (data.success != 1) {
+                swal(T3.labels['js.ajax.fail'], data.message, 'error');
                 console.log('Failed to fetch numbers for campaign (' + campaignId + ')');
             } else {
+                // loop through data.message
+                // key is used to find objects
+                // property is used as html
                 for (var key in data.message){
                     if (data.message.hasOwnProperty(key)) {
                         var obj = $('[data-identifier="' + key + '"]');
@@ -236,35 +229,12 @@
             }
         }, 'json'
         ).fail(function(jqXHR, textStatus, errorThrown) {
+            swal(T3.labels['js.ajax.fail'], 'errorThrown = ' + errorThrown + ', jqXHR = ' + jqXHR, 'error');
             console.log('updateCampaignNumbers failed : ' + textStatus);
         });
     }
 
-    function generateChecksum(campaignId, pledgeId, amount) {
-        $.post(T3.settings.uriAjax, {
-            method: 'checksum',
-            campaignId: campaignId,
-            pledgeId: pledgeId,
-            amount: amount
-        }, function(data, textStatus, jqXHR) {
-            if (data.success != 1) {
-                console.log('Failed to fetch numbers for campaign (' + campaignId + ')');
-            } else {
-                for (var key in data.message){
-                    if (data.message.hasOwnProperty(key)) {
-                        var obj = $('[data-identifier="' + key + '"]');
-                        if (obj) {
-                            obj.html(data.message[key]);
-                        }
-                    }
-                }
-            }
-        }, 'json'
-        ).fail(function(jqXHR, textStatus, errorThrown) {
-            console.log('updateCampaignNumbers failed : ' + textStatus);
-        });
-    }
-
+    // validate custom amount
     function validateCustomAmount() {
         var customAmount = $('[data-identifier="backamount"]');
         var isValid = false;

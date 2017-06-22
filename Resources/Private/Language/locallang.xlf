@@ -84,6 +84,12 @@
 			<trans-unit id="constants.subcategory.currency">
 				<source>Rendering of currency on pages</source>
 			</trans-unit>
+			<trans-unit id="js.ajax.fail">
+				<source>The request failed</source>
+			</trans-unit>
+			<trans-unit id="label.campaign.notfound">
+				<source>Could not find the Campaign</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

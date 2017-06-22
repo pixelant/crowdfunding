@@ -16,6 +16,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use Pixelant\Crowdfunding\Utility\CrowdfundingUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * CampaignController
@@ -76,7 +77,8 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $this->view->assignMultiple([
             'campaigns' => $campaigns,
             'detailPid' => $this->getDetailPid(),
-            'jsVariables' => json_encode($this->jsVariables)
+            'jsVariables' => json_encode($this->jsVariables),
+            'jsLabels' => json_encode($this->getLocalizedFrontendLabels())
         ]);
     }
 
@@ -88,10 +90,13 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function showAction(\Pixelant\Crowdfunding\Domain\Model\Campaign $campaign)
     {
+        $this->jsVariables['token'] = $formProtectToken;
         $this->view->assignMultiple([
             'campaign' => $campaign,
             'listPid' => $this->getListPid(),
-            'jsVariables' => json_encode($this->jsVariables)
+            'token' => $this->getToken($formProtectToken),
+            'jsVariables' => json_encode($this->jsVariables),
+            'jsLabels' => json_encode($this->getLocalizedFrontendLabels())
         ]);
     }
 
@@ -103,13 +108,21 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function ajaxAction()
     {
+
+        // TODO: maybe simple check of $_SERVER['HTTP_X_REQUESTED_WITH'], $_SERVER['HTTP_REFERER'] or $_SERVER['HTTP_ORIGIN']
+
         $responseData = array();
         $arguments = $this->request->getArguments();
         $method = isset($_POST['method']) ? $_POST['method'] : 'default';
         $hash = isset($_GET['hash']) ? $_GET['hash'] : '';
         $ajaxFunction = 'ajaxAction' . ucfirst($method);
         if (method_exists(__CLASS__, $ajaxFunction)) {
-            $responseData = $this->{$ajaxFunction}();
+            try {
+                $responseData = $this->{$ajaxFunction}();
+            } catch (\Exception $e) {
+                $responseData['success'] = 0;
+                $responseData['message'] = $e->getMessage();
+            }
         } else {
             $responseData['success'] = 0;
             $responseData['message'] = 'Unknown method (' . $ajaxFunction . ')';
@@ -247,36 +260,49 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     public function ajaxActionCampaignNumbers()
     {
         $campaignId = (int)$_POST['campaignId'];
+        $campaign = $this->getCampaign($campaignId);
         $toString = (int)$_POST['toString'];
         $message = [];
+        $success = false;
+
+        // throw exception if campaign wasn't found, shouldn't happen
+        if (!$campaign) {
+            $this->logError(__FUNCTION__ . ', campaign was not fetched');
+            throw new \Exception(LocalizationUtility::translate('label.campaign.notfound', 'Crowdfunding'));
+        }
 
         try {
-            $campaign = $this->campaignRepository->findByUid($campaignId);
-            if ($campaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign) {
-                if ($toString) {
-                    $message['pledged'] = $campaign->getPledgedAsString();
-                    $message['totalBackedAmount'] = $campaign->getTotalBackedAmountAsString();
-                } else {
-                    $message['pledged'] = $campaign->getPledged();
-                    $message['totalBackedAmount'] = $campaign->getTotalBackedAmount();
-                }
-                $message['backers'] = count($campaign->getBackers());
-                $message['totalBackedAmountPercent'] = $campaign->getTotalBackedAmountPercent() . '%';
+            // fetch properties which also can be fetched as string
+            if ($toString) {
+                $message['pledged'] = $campaign->getPledgedAsString();
+                $message['totalBackedAmount'] = $campaign->getTotalBackedAmountAsString();
+            } else {
+                $message['pledged'] = $campaign->getPledged();
+                $message['totalBackedAmount'] = $campaign->getTotalBackedAmount();
+            }
 
-                foreach ($campaign->getPledges() as $pledge) {
-                    $keyPrefix = 'pledge_' . $pledge->getUid() . '_';
-                    if ($toString) {
-                        $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmountAsString();
-                    } else {
-                        $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmount();
-                    }
+            // fetch properties without option to be fetched as string
+            $message['backers'] = count($campaign->getBackers());
+            $message['totalBackedAmountPercent'] = $campaign->getTotalBackedAmountPercent() . '%';
+
+            // fetch pledge properties
+            foreach ($campaign->getPledges() as $pledge) {
+                // set prefix so js can find objects
+                $keyPrefix = 'pledge_' . $pledge->getUid() . '_';
+                // different properties if toString
+                if ($toString) {
+                    $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmountAsString();
+                } else {
+                    $message[$keyPrefix . 'totalBackedAmount'] = $pledge->getTotalBackedAmount();
                 }
             }
+            $success = true;
         } catch (\Exception $e) {
+            $this->logError(__FUNCTION__ . ', exception caught: ' . $e->getMessage());
             $message = $e->getMessage();
         }
 
-        $responseData['success'] = $campaign instanceof \Pixelant\Crowdfunding\Domain\Model\Campaign;
+        $responseData['success'] = $success;
         $responseData['message'] = $message;
 
         return $responseData;
@@ -317,7 +343,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $isAmountValid = false;
         $message = '';
         if ($campaign) {
-            if ($amount >= $campaign->getMinAmount()){
+            if ($amount >= $campaign->getMinAmount()) {
                 $isAmountValid = true;
                 $message = CrowdfundingUtility::formatCurrency($amount);
             } else {
@@ -381,6 +407,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getBacker($email)
     {
+        // TODO: check storagepid, seems not to find any record when call is from js (ajax) 
         $backer = $this->backerRepository->findOneByEmail($email);
         if (!$backer instanceof \Pixelant\Crowdfunding\Domain\Model\Backer) {
             $backer = GeneralUtility::makeInstance(
@@ -453,7 +480,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
         // check if a campaign is found
         if (!$campaign) {
-            throw new \Exception("Cannot generate checksum without a valid campaign", 1);
+            throw new \Exception("Cannot generate checksum without a valid campaign");
         }
 
         // check that amount is equal to pledge amount if pledge is set
@@ -469,5 +496,47 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $crdate = $campaign->getCrdate();
         $checksum = $campaignId . '|' . $crdate . '|' . $pledgeId . '|' . $amount;
         return hash('sha256', $checksum);
+    }
+
+    /**
+     * Localize labels
+     *
+     * @return array
+     */
+    protected function getLocalizedFrontendLabels()
+    {
+        $languageFactory = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\LocalizationFactory');
+        $parsedLocallang = $languageFactory->getParsedData(
+            'EXT:crowdfunding/Resources/Private/Language/locallang.xlf',
+            'default'
+        );
+        $localizedLabels = [];
+        foreach (array_keys($parsedLocallang['default']) as $key) {
+            $localizedLabels[$key] = LocalizationUtility::translate($key, 'Crowdfunding');
+        }
+        return $localizedLabels;
+    }
+
+    protected function logError($message)
+    {
+        /** @var $logger \TYPO3\CMS\Core\Log\Logger */
+        $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+        $data['requestUri'] = $this->request->getRequestUri();
+        $data['method'] = $this->request->getMethod();
+        $data['get'] = $_GET;
+        $data['post'] = $_POST;
+        $data['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
+        $data['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+        $data['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+        $logger->error($message, $data);
+    }
+
+    protected function getToken($campaignId)
+    {
+        $token = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get(
+            \Pixelant\Crowdfunding\FormProtection\CrowdfundingFormProtection::class
+        )
+        ->generateToken('tx_crowdfunding_domain_model_campaign', 'show', $campaignId);
+        return $token;
     }
 }

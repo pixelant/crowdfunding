@@ -58,31 +58,33 @@ Otherwise your changes will be overwritten the next time you save the extension 
         <dd><span data-identifier="backers">{campaign.backers->f:count()}</span></dd>
       </dl>
 
-      <div class="tx-crowdfunding-back">
-        <div class="list-group">
-          <div class="list-group-item">
-              <h4 class="list-group-item-heading">Back campaign without pledge</h4>
-              <div class="row">
-                
-                <div class="form-group col-md-4">
-                  <input
-                    id="inputBackAmount"
-                    type="number"
-                    name="back-amount"
-                    class="form-control"
-                    data-campaignid="{campaign.uid}"
-                    data-identifier="backamount"
-                    data-minamount="{campaign.minAmount}"
-                    value="{campaign.minAmount}" />
+      <f:if condition="{campaign.minAmount}">
+        <div class="tx-crowdfunding-back">
+          <div class="list-group">
+            <div class="list-group-item">
+                <h4 class="list-group-item-heading">Back campaign without pledge</h4>
+                <div class="row">
+                  
+                  <div class="form-group col-md-4">
+                    <input
+                      id="inputBackAmount"
+                      type="number"
+                      name="back-amount"
+                      class="form-control"
+                      data-campaignid="{campaign.uid}"
+                      data-identifier="backamount"
+                      data-minamount="{campaign.minAmount}"
+                      value="{campaign.minAmount}" />
+                  </div>
+                  <div class="col-md-8">
+                    <button class="btn btn-primary" data-identifier="backcampaign">TR: BACK</button>
+                  </div>
                 </div>
-                <div class="col-md-8">
-                  <button class="btn btn-primary" data-identifier="backcampaign">TR: BACK</button>
-                </div>
-              </div>
+            </div>
           </div>
         </div>
-      </div>
-        
+      </f:if>
+  
       <button class="btn btn-warning js_update-numbers" data-campaignid="{campaign.uid}">TEST</button>
     </div>
 
@@ -109,8 +111,6 @@ Otherwise your changes will be overwritten the next time you save the extension 
     </div>
   </div>
 </div>
-
-<f:render partial="Campaign/Modal" />
 
 <f:comment>
 jsVariables = {jsVariables}
