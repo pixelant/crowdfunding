@@ -18,6 +18,7 @@
 
         // add click event to pledge buttons 
         $('.js__pledge').each(function() {
+            $(this).prop("disabled", T3.settings.stripe.disableStripe);
             $(this).on('click', function(e) {
                 e.preventDefault();
 
@@ -44,7 +45,8 @@
                             description: description,
                             zipCode: true,
                             currency: T3.settings.stripe.currency,
-                            amount: amount * 100
+                            amount: amount * 100,
+                            allowRememberMe: false
                         });
                     }
                 }, 'json'
@@ -75,6 +77,8 @@
             }
         });
 
+        // disable buttons if no https
+        $('[data-identifier="backcampaign"]').prop("disabled", T3.settings.stripe.disableStripe);
         // add click event for "free" amount button
         $('[data-identifier="backcampaign"]').on('click', function(e) {
             e.preventDefault();
@@ -83,6 +87,9 @@
             if (backInput.exists()) {
                 amount = $(backInput).val();
                 campaignId = $(backInput).data('campaignid');
+                pledgeId = 0;
+                amountStr = '';
+                description = $(backInput).data('pledgetitle');
 
                 // Check that amount is valid
                 $.post(T3.settings.uriAjax, {
@@ -111,7 +118,8 @@
                                     description: description,
                                     zipCode: true,
                                     currency: T3.settings.stripe.currency,
-                                    amount: amount * 100
+                                    amount: amount * 100,
+                                    allowRememberMe: false
                                 });
                             }
                         }, 'json'
@@ -148,8 +156,8 @@
         // Let strip close...
         setTimeout(function(){
             swal({
-                title: "Proceed",
-                text: "Proceed and charge card with " + amountStr,
+                title: T3.labels['label.confirmCharge.title'],
+                text: T3.labels['label.confirmCharge.text'] + amountStr,
                 type: "info",
                 showCancelButton: true,
                 closeOnConfirm: false,
@@ -178,11 +186,17 @@
     function chargeResponseProcess(data, textStatus, jqXHR) {
         updateCampaignNumbers(campaignId);
         if (data.success != 1) {
-            // TODO: proper title
-            swal("FAIL Your message here…", data.message, 'error');
+            swal(
+                T3.labels['label.chargeResponse.failedTitle'],
+                T3.labels['label.chargeResponse.failedText'] + ' ' + data.message,
+                'error'
+            );
         } else {
-            // TODO: proper title
-            swal("Your message here…", data.message, 'success');
+            swal(
+                T3.labels['label.chargeResponse.successTitle'],
+                data.message,
+                'success'
+            );
         }
         resetVars();
     }
@@ -212,7 +226,6 @@
             toString: 1
         }, function(data, textStatus, jqXHR) {
             if (data.success != 1) {
-                swal(T3.labels['js.ajax.fail'], data.message, 'error');
                 console.log('Failed to fetch numbers for campaign (' + campaignId + ')');
             } else {
                 // loop through data.message
@@ -229,8 +242,7 @@
             }
         }, 'json'
         ).fail(function(jqXHR, textStatus, errorThrown) {
-            swal(T3.labels['js.ajax.fail'], 'errorThrown = ' + errorThrown + ', jqXHR = ' + jqXHR, 'error');
-            console.log('updateCampaignNumbers failed : ' + textStatus);
+            console.log(T3.labels['js.ajax.fail'] + ' updateCampaignNumbers failed : ' + errorThrown);
         });
     }
 
@@ -248,7 +260,7 @@
                 $('[data-identifier="backcampaign"]').prop("disabled", true);
             } else {
                 $(customAmount).parent().removeClass('has-error');
-                $('[data-identifier="backcampaign"]').prop("disabled", false);
+                $('[data-identifier="backcampaign"]').prop("disabled", T3.settings.stripe.disableStripe);
                 isValid = true;
             }
         }

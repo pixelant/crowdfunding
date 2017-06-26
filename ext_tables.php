@@ -2,9 +2,7 @@
 defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(
-    function()
-    {
-
+    function () {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
             'Pixelant.Crowdfunding',
             'Crowdfunding',
@@ -32,6 +30,5 @@ call_user_func(
             crowdfunding,
             'tx_crowdfunding_domain_model_campaign'
         );
-
     }
 );

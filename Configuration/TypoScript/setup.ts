@@ -8,6 +8,9 @@ plugin.tx_crowdfunding_crowdfunding {
         layoutRootPaths.0 = EXT:crowdfunding/Resources/Private/Layouts/
         layoutRootPaths.1 = {$plugin.tx_crowdfunding_crowdfunding.view.layoutRootPath}
     }
+    persistence {
+        storagePid = {$plugin.tx_crowdfunding_crowdfunding.persistence.storagePid}
+    }
     features {
         #skipDefaultArguments = 1
         # if set to 1, the enable fields are ignored in BE context
@@ -34,12 +37,11 @@ plugin.tx_crowdfunding_crowdfunding {
             publishableKey = {$plugin.tx_crowdfunding_crowdfunding.settings.stripe.publishableKey}
         }
         ajaxPageType = {$plugin.tx_crowdfunding_crowdfunding.settings.ajaxPageType}
+        adminEmail = {$plugin.tx_crowdfunding_crowdfunding.settings.adminEmail}
     }
 }
 
 plugin.tx_crowdfunding {
-    persistence {
-        storagePid = {$plugin.tx_crowdfunding_crowdfunding.persistence.storagePid}
         #recursive = 1
         classes {
             Pixelant\Crowdfunding\Domain\Model\Campaign {

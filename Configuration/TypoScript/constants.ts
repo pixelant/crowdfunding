@@ -37,7 +37,9 @@ plugin.tx_crowdfunding_crowdfunding {
         stripe.name =
         # cat=plugin.tx_crowdfunding_crowdfunding/stripe/140; type=string; label=URL pointing to a square image of your brand or product: The recommended minimum size is 128x128px. (supported image types .gif, .jpeg, and .png)
         stripe.image =
-        # cat=plugin.tx_crowdfunding_crowdfunding/advanced/140; type=string; label=Ajax page type (for ajax javascript calls)
+        # cat=plugin.tx_crowdfunding_crowdfunding/advanced/150; type=string; label=Ajax page type (for ajax javascript calls)
         ajaxPageType = 201706131
+        # cat=plugin.tx_crowdfunding_crowdfunding/advanced/160; type=string; label=Admin email
+        adminEmail = 
     }
 }

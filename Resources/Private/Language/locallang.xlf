@@ -84,12 +84,29 @@
 			<trans-unit id="constants.subcategory.currency">
 				<source>Rendering of currency on pages</source>
 			</trans-unit>
-			<trans-unit id="js.ajax.fail">
-				<source>The request failed</source>
-			</trans-unit>
 			<trans-unit id="label.campaign.notfound">
 				<source>Could not find the Campaign</source>
 			</trans-unit>
+			<trans-unit id="label.campaign.backWithoutPledge">
+				<source>Back campaign without a pledge</source>
+			</trans-unit>
+			<trans-unit id="label.campaign.backWithoutPledgeButton">
+				<source>Back with</source>
+			</trans-unit>
+			<trans-unit id="label.campaign.minimumPledgeAmount">
+				<source>Minimum amount is %s</source>
+			</trans-unit>
+			<trans-unit id="label.chargeSuccess">
+				<source>Thank you for backing this campaing with </source>
+			</trans-unit>
+			<trans-unit id="label.backToList">
+				<source>Back to list</source>
+			</trans-unit>
+			<trans-unit id="errormail.subject">
+				<source>An error was logged in Crowdfunding extension</source>
+			</trans-unit>
+			
+			
 		</body>
 	</file>
 </xliff>

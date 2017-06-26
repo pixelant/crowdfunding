@@ -53,18 +53,17 @@ Otherwise your changes will be overwritten the next time you save the extension 
           <span data-identifier="totalBackedAmount">{campaign.totalBackedAmountAsString}</span>
           &nbsp;(<span data-identifier="totalBackedAmountPercent">{campaign.totalBackedAmountPercent}%</span>)
         </dd>
-
         <dt><f:translate key="tx_crowdfunding_domain_model_campaign.backers" />:</dt>
-        <dd><span data-identifier="backers">{campaign.backers->f:count()}</span></dd>
+        <dd><span data-identifier="backers">{campaign.numberOfValidTransactions}</span></dd>
       </dl>
 
-      <f:if condition="{campaign.minAmount}">
+      <f:if condition="{campaign.minAmount} && !{disableStripe}">
         <div class="tx-crowdfunding-back">
           <div class="list-group">
             <div class="list-group-item">
-                <h4 class="list-group-item-heading">Back campaign without pledge</h4>
+                <h4 class="list-group-item-heading"><f:translate key="label.campaign.backWithoutPledge" /></h4>
+                <p><f:translate key="label.campaign.minimumPledgeAmount" arguments="{0: campaign.minAmountAsString}" /><p>
                 <div class="row">
-                  
                   <div class="form-group col-md-4">
                     <input
                       id="inputBackAmount"
@@ -72,12 +71,13 @@ Otherwise your changes will be overwritten the next time you save the extension 
                       name="back-amount"
                       class="form-control"
                       data-campaignid="{campaign.uid}"
+                      data-pledgetitle="{campaign.title}"
                       data-identifier="backamount"
                       data-minamount="{campaign.minAmount}"
                       value="{campaign.minAmount}" />
                   </div>
                   <div class="col-md-8">
-                    <button class="btn btn-primary" data-identifier="backcampaign">TR: BACK</button>
+                    <button class="btn btn-primary" data-identifier="backcampaign"><f:translate key="label.campaign.backWithoutPledgeButton" /></button>
                   </div>
                 </div>
             </div>
@@ -96,14 +96,16 @@ Otherwise your changes will be overwritten the next time you save the extension 
             <div class="list-group-item">
               <h4 class="list-group-item-heading">{pledge.title}</h4>
               <p class="list-group-item-text"><f:format.html>{pledge.description}</f:format.html></p>
-              <button 
-                  class="btn btn-primary btn-block js__pledge"
-                  data-campaignid="{campaign.uid}"
-                  data-pledgeid="{pledge.uid}"
-                  data-pledgeamount="{pledge.amount}"
-                  data-pledgeamountstr="{pledge.amountAsString}"
-                  data-pledgetitle="{campaign.title} - {pledge.title}"
-                  data-checksum="{pledge.checksum}">Back with {pledge.amountAsString}</button>
+              <f:if condition="{pledge.amount} && !{disableStripe}">
+                <button 
+                    class="btn btn-primary btn-block js__pledge"
+                    data-campaignid="{campaign.uid}"
+                    data-pledgeid="{pledge.uid}"
+                    data-pledgeamount="{pledge.amount}"
+                    data-pledgeamountstr="{pledge.amountAsString}"
+                    data-pledgetitle="{campaign.title} - {pledge.title}"
+                    data-checksum="{pledge.checksum}">{f:translate(key:'label.campaign.backWithoutPledgeButton')}&nbsp;{pledge.amountAsString}</button>
+              </f:if>
             </div>
           </f:for>
         </div>
@@ -117,7 +119,7 @@ jsVariables = {jsVariables}
 <p><button class="btn btn-warning js_update-numbers" data-campaignid="{campaign.uid}">TEST</button></p>
 </f:comment>
 
-<f:link.action action="list" pageUid="{listPid}" class="btn btn-default">Back to list</f:link.action>
+<f:link.action action="list" pageUid="{listPid}" class="btn btn-default">{f:translate(key:'label.backToList')}</f:link.action>
 
 </f:section>
 </html>

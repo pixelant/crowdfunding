@@ -62,8 +62,9 @@ return [
             'exclude' => false,
             'label' => 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_transaction.reference',
             'config' => [
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'text',
+                'cols' => 40,
+                'rows' => 15,
                 'eval' => 'trim,required'
             ],
         ],
@@ -107,8 +108,9 @@ return [
             'exclude' => false,
             'label' => 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_transaction.status',
             'config' => [
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'text',
+                'cols' => 40,
+                'rows' => 15,
                 'eval' => 'trim,required'
             ],
         ],

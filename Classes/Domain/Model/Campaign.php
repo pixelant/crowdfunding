@@ -90,6 +90,13 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $crdate;
 
     /**
+     * numberOfValidTransactions
+     *
+     * @var int
+     */
+    protected $numberOfValidTransactions = null;
+
+    /**
      * Returns the title
      *
      * @return string $title
@@ -348,7 +355,8 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 )
                 ->from('tx_crowdfunding_domain_model_transaction')
                 ->where(
-                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('state', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
                 )
                 ->groupBy('campaign_id')
                 ->execute()
@@ -396,7 +404,7 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         $totalBackedAmount = $this->getTotalBackedAmount();
 
         if ($totalBackedAmount > 0 && $this->pledged > 0) {
-            if ((int)$totalBackedAmount < (int)$this->pledged){
+            if ((int)$totalBackedAmount < (int)$this->pledged) {
                 $percent = ($totalBackedAmount / $this->pledged) * 100;
             } else {
                 $percent = 100;
@@ -414,5 +422,50 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function getCrdate()
     {
         return $this->crdate;
+    }
+
+    /**
+     * Returns the minAmount as "currency"
+     *
+     * @return string
+     */
+    public function getMinAmountAsString()
+    {
+        return CrowdfundingUtility::formatCurrency(
+            $this->minAmount
+        );
+    }
+
+    /**
+     * Returns the total count of valid transactions for campaign
+     *
+     * @return float
+     */
+    public function getNumberOfValidTransactions()
+    {
+        if ($this->numberOfValidTransactions === null) {
+            $this->numberOfValidTransactions = 0;
+
+            $queryBuilder =
+                \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    \TYPO3\CMS\Core\Database\ConnectionPool::class
+                )
+                ->getQueryBuilderForTable('tx_crowdfunding_domain_model_transaction');
+
+            $result = $queryBuilder
+                ->count('uid')
+                ->from('tx_crowdfunding_domain_model_transaction')
+                ->where(
+                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('state', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+                )
+                ->execute()
+                ->fetchColumn(0);
+
+            if (!empty($result)) {
+                $this->numberOfValidTransactions = $result;
+            }
+        }
+        return $this->numberOfValidTransactions;
     }
 }

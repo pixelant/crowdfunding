@@ -59,6 +59,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     {
         // Manually set variables for javascript to avoid f.ex. secret settings to get rendered into page
         $this->jsVariables['uriAjax'] = $this->buildUriAjax();
+        $this->jsVariables['stripe']['disableStripe'] = $_SERVER['HTTPS'] === null ? 1 : 0;
         $this->jsVariables['stripe']['publishableKey'] = $this->settings['stripe']['publishableKey'];
         $this->jsVariables['stripe']['currency'] = $this->settings['stripe']['currency'];
         $this->jsVariables['stripe']['name'] = $this->settings['stripe']['name'];
@@ -90,11 +91,10 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function showAction(\Pixelant\Crowdfunding\Domain\Model\Campaign $campaign)
     {
-        $this->jsVariables['token'] = $formProtectToken;
         $this->view->assignMultiple([
             'campaign' => $campaign,
             'listPid' => $this->getListPid(),
-            'token' => $this->getToken($formProtectToken),
+            'disableStripe' => $_SERVER['HTTPS'] === null ? 1 : 0,
             'jsVariables' => json_encode($this->jsVariables),
             'jsLabels' => json_encode($this->getLocalizedFrontendLabels())
         ]);
@@ -108,8 +108,21 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function ajaxAction()
     {
-
-        // TODO: maybe simple check of $_SERVER['HTTP_X_REQUESTED_WITH'], $_SERVER['HTTP_REFERER'] or $_SERVER['HTTP_ORIGIN']
+        // simple check of $_SERVER['HTTP_X_REQUESTED_WITH']
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
+            return json_encode([
+                'success' => 0,
+                'message' => 'Invalid request'
+            ]);
+        }
+        // simple check of $_SERVER['HTTP_REFERER']
+        if (!$this->checkReferer()) {
+            return json_encode([
+                'success' => 0,
+                'message' => 'Invalid request'
+            ]);
+        }
 
         $responseData = array();
         $arguments = $this->request->getArguments();
@@ -141,20 +154,26 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $responseData = array();
         $campaign = null;
         $pledge = null;
+        $transaction = null;
+        $backer = null;
+        $customer = null;
+        $charge = null;
+
         $campaignId = (int)$_POST['campaignId'];
         $pledgeId = (int)$_POST['pledgeId'];
         $token  = $_POST['stripeToken'];
         $amount  = $_POST['amount'];
         $email = $token['email'];
         $checksum = $_POST['checksum'];
-        $status = null;
+        $state = 0; 
+        $status = '';
         $e = null;
 
         try {
             // get campaign
             $campaign = $this->getCampaign($campaignId);
             if (!$campaign) {
-                throw new \Exception("Error Processing Request", 1);
+                throw new \Exception("Error Processing Request");
             }
 
             // compare checksums
@@ -164,7 +183,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 $amount
             );
             if ($buildChecksum != $checksum) {
-                throw new \Exception("Checksum mismatch", 1);
+                throw new \Exception("Checksum mismatch");
             }
 
             // fetch pledge if selected
@@ -183,8 +202,8 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             if ($pledge) {
                 $transaction->setPledgingId($pledge->getUid());
             }
-            $transaction->setPid($campaign->getPid());
-
+            $transaction->setAmount($amount);
+            
             // Stripe - set
             \Stripe\Stripe::setApiKey($this->settings['stripe']['secretKey']);
 
@@ -192,8 +211,6 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 'email' => $email,
                 'source'  => $token['id']
             ]);
-
-            // TODO: if pledgeid, check if $pledge->getAmount() is less than amount then throw error....
 
             $charge = \Stripe\Charge::create([
                 'customer' => $customer->id,
@@ -207,47 +224,82 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 ]
             ]);
 
-            $transaction->setStatus($status);
-            $transaction->setAmount($amount);
-            $this->transactionRepository->add($transaction);
-            $backer->addTransaction($transaction);
-            $backer->setPid($campaign->getPid());
-            // $this->backerRepository->update($backer);
-            $campaign->addBacker($backer);
-            $this->campaignRepository->update($campaign);
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            $objectManager->get(PersistenceManager::class)->persistAll();
-
-            $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
-            $cacheManager->flushCachesInGroupByTag('pages', 'crowdfunding');
+            $state = 1;
+            $status = $charge->getLastResponse()->body;
             $responseData['success'] = 1;
-            $responseData['message'] = 'Thank you message ... ' . $amount;
-        } catch (\Exception $e) {
+            $amountStr = CrowdfundingUtility::formatCurrency($amount);
+            $responseData['message'] =  LocalizationUtility::translate('label.chargeSuccess', 'Crowdfunding') . ' ' . $amountStr;
+        } catch (\Stripe\Error\Card $e) {
+            // Since it's a decline, \Stripe\Error\Card will be caught
             $responseData['success'] = 0;
             $responseData['message'] = $e->getMessage();
+            $body = $e->getJsonBody();
+            $err  = $body['error'];
+            $status = 'Status: ' . $e->getHttpStatus() . "\n" .
+                'message: ' . $err['message'] . "\n" .
+                'code: ' . $err['code'] . "\n" .
+                'decline_code: ' . $err['decline_code'] . "\n" .
+                'charge: ' . $err['charge'];
+        } catch (\Stripe\Error\RateLimit $e) {
+            // Too many requests made to the API too quickly
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
         } catch (\Stripe\Error\InvalidRequest $e) {
+            // Invalid parameters were supplied to Stripe's API
             $responseData['success'] = 0;
             $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
+        } catch (\Stripe\Error\Authentication $e) {
+            // Authentication with Stripe's API failed
+            // (maybe you changed API keys recently)
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
+        } catch (\Stripe\Error\ApiConnection $e) {
+            // Network communication with Stripe failed
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
+        } catch (\Stripe\Error\Base $e) {
+            // Display a very generic error to the user, and maybe send
+            // yourself an email
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
+        } catch (\Exception $e) {
+            // Something else happened, completely unrelated to Stripe
+            $responseData['success'] = 0;
+            $responseData['message'] = $e->getMessage();
+            $status = $e->getMessage();
         }
-        /*
-        // @TODO: Start of debug, remember to remove when debug is done!
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
-            array(
-                'details' => array('@' => date('Y-m-d H:i:s'), 'class' => __CLASS__, 'function' => __FUNCTION__, 'file' => __FILE__, 'line' => __LINE__),
-                'campaign' => $campaign,
-                'pledge' => $pledge,
-                'token' => $token,
-                'email' => $email,
-                'backer' => $backer,
-                'transaction' => $transaction,
-                'customer' => $customer,
-                'charge' => $charge,
-                'error' => $e
-            )
-            ,date('Y-m-d H:i:s') . ' : ' . __METHOD__ . ' : ' . __LINE__
-        );
-        // @TODO: End of debug, remember to remove when debug is done!
-        */
+
+        if (!empty($transaction)) {
+            $transaction->setState($state);
+            $transaction->setStatus($status);
+            $this->transactionRepository->add($transaction);
+            if (!empty($backer)) {
+                $backer->addTransaction($transaction);
+                if (!empty($campaign)) {
+                    $campaign->addBacker($backer);
+                    $this->campaignRepository->update($campaign);
+                }
+            }
+        }
+
+        // $this->backerRepository->update($backer);
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $objectManager->get(PersistenceManager::class)->persistAll();
+
+        if ($status !== 0) {
+            $this->logError(
+                __FUNCTION__ . ' failed (' . $status . ') see transaction [' . $transaction->getUid() . ']'
+            );
+        }
+
+        $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
+        $cacheManager->flushCachesInGroupByTag('pages', 'crowdfunding');
+
         return $responseData;
     }
 
@@ -282,7 +334,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             }
 
             // fetch properties without option to be fetched as string
-            $message['backers'] = count($campaign->getBackers());
+            $message['backers'] = $campaign->getNumberOfValidTransactions();
             $message['totalBackedAmountPercent'] = $campaign->getTotalBackedAmountPercent() . '%';
 
             // fetch pledge properties
@@ -376,7 +428,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
     /**
      * get page id to "detail" page
-     * 
+     *
      * @return int
      */
     protected function getDetailPid()
@@ -388,7 +440,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
     /**
      * get page id to "list" page
-     * 
+     *
      * @return int
      */
     protected function getListPid()
@@ -400,14 +452,14 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
     /**
      * get "backer" by email, returns first with same email or creates a new
-     * 
+     *
      * @param string $email
      *
      * @return \Pixelant\Crowdfunding\Domain\Model\Backer
      */
     protected function getBacker($email)
     {
-        // TODO: check storagepid, seems not to find any record when call is from js (ajax) 
+        // TODO: check storagepid, seems not to find any record when call is from js (ajax)
         $backer = $this->backerRepository->findOneByEmail($email);
         if (!$backer instanceof \Pixelant\Crowdfunding\Domain\Model\Backer) {
             $backer = GeneralUtility::makeInstance(
@@ -506,17 +558,26 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function getLocalizedFrontendLabels()
     {
         $languageFactory = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Localization\\LocalizationFactory');
+        $llJsFile = 'EXT:crowdfunding/Resources/Private/Language/locallang_js.xlf';
         $parsedLocallang = $languageFactory->getParsedData(
-            'EXT:crowdfunding/Resources/Private/Language/locallang.xlf',
+            $llJsFile,
             'default'
         );
+        $lllPrefix = 'LLL:' . $llJsFile . ':';
         $localizedLabels = [];
         foreach (array_keys($parsedLocallang['default']) as $key) {
-            $localizedLabels[$key] = LocalizationUtility::translate($key, 'Crowdfunding');
+            $localizedLabels[$key] = LocalizationUtility::translate($lllPrefix . $key, 'Crowdfunding');
         }
         return $localizedLabels;
     }
 
+    /**
+     * Log error
+     *
+     * @param string $message
+     *
+     * @return void
+     */
     protected function logError($message)
     {
         /** @var $logger \TYPO3\CMS\Core\Log\Logger */
@@ -529,14 +590,30 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $data['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
         $data['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
         $logger->error($message, $data);
+
+        // Send mail to admin if adminEmail setting is set
+        if (!empty($this->settings['adminEmail'])) {
+            $subject = LocalizationUtility::translate('errormail.subject', 'Crowdfunding');
+            $recievers = GeneralUtility::trimExplode(',', $this->settings['adminEmail']);
+            if (is_array($recievers) && count($recievers) > 0 ) {
+                $mail = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Mail\\MailMessage');
+                $mail->setSubject('An error was logged in Crowdfounding extension');
+                $mail->setTo($recievers);
+                $mail->setBody($message);
+                $mail->send();
+            }
+        }
     }
 
-    protected function getToken($campaignId)
+    /**
+     * Check referer
+     *
+     * @return bool
+     */
+    protected function checkReferer()
     {
-        $token = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get(
-            \Pixelant\Crowdfunding\FormProtection\CrowdfundingFormProtection::class
-        )
-        ->generateToken('tx_crowdfunding_domain_model_campaign', 'show', $campaignId);
-        return $token;
+        $protocol = $_SERVER['HTTPS'] === null ? 'http://' : 'https://';
+        $address = $protocol . $_SERVER['SERVER_NAME'] . '/';
+        return substr($_SERVER['HTTP_REFERER'], 0, strlen($address)) === $address;
     }
 }

@@ -72,6 +72,9 @@
 			<trans-unit id="tx_crowdfunding_domain_model_transaction.amount">
 				<source>Amount</source>
 			</trans-unit>
+			<trans-unit id="tx_crowdfunding_domain_model_transaction.campaign_id">
+				<source>Campaign Id</source>
+			</trans-unit>
 			<trans-unit id="tx_crowdfunding_domain_model_transaction.pledging_id">
 				<source>Pledging Id</source>
 			</trans-unit>

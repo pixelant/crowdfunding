@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-06-09T15:04:00Z" product-name="crowdfunding">
+		<header/>
+		<body>
+			<trans-unit id="js.ajax.fail">
+				<source>The request failed</source>
+			</trans-unit>
+			<trans-unit id="label.confirmCharge.title">
+				<source>Proceed with payment?</source>
+			</trans-unit>
+			<trans-unit id="label.confirmCharge.text">
+				<source>If you proceed the card will be charged with </source>
+			</trans-unit>
+			<trans-unit id="label.chargeResponse.failedTitle">
+				<source>Charge failed</source>
+			</trans-unit>
+			<trans-unit id="label.chargeResponse.failedText">
+				<source>The charge process failed :</source>
+			</trans-unit>
+			<trans-unit id="label.chargeResponse.successTitle">
+				<source>Charge was successful</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

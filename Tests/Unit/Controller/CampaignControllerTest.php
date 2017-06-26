@@ -30,7 +30,6 @@ class CampaignControllerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function listActionFetchesAllCampaignsFromRepositoryAndAssignsThemToView()
     {
-
         $allCampaigns = $this->getMockBuilder(\TYPO3\CMS\Extbase\Persistence\ObjectStorage::class)
             ->disableOriginalConstructor()
             ->getMock();

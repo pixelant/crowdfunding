@@ -137,12 +137,12 @@ CREATE TABLE tx_crowdfunding_domain_model_transaction (
 
 	backer int(11) unsigned DEFAULT '0' NOT NULL,
 
-	reference varchar(255) DEFAULT '' NOT NULL,
+	reference text,
 	amount double(11,2) DEFAULT '0.00' NOT NULL,
 	campaign_id int(11) DEFAULT '0' NOT NULL,
 	pledging_id int(11) DEFAULT '0' NOT NULL,
 	state int(11) DEFAULT '0' NOT NULL,
-	status varchar(255) DEFAULT '' NOT NULL,
+	status text,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
