@@ -15,24 +15,26 @@ call_user_func(
             ]
         );
 
-    // wizards
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-        'mod {
-            wizards.newContentElement.wizardItems.plugins {
-                elements {
-                    crowdfunding {
-                        icon = ' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('crowdfunding') . 'Resources/Public/Icons/user_plugin_crowdfunding.svg
-                        title = LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_crowdfunding
-                        description = LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf:tx_crowdfunding_domain_model_crowdfunding.description
-                        tt_content_defValues {
-                            CType = list
-                            list_type = crowdfunding_crowdfunding
+        // wizards
+        $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('crowdfunding');
+        $locallangDbXlf = 'LLL:EXT:crowdfunding/Resources/Private/Language/locallang_db.xlf';
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
+            'mod {
+                wizards.newContentElement.wizardItems.plugins {
+                    elements {
+                        crowdfunding {
+                            icon = ' . $extRelPath . 'Resources/Public/Icons/user_plugin_crowdfunding.svg
+                            title = ' . $locallangDbXlf . ':tx_crowdfunding_domain_model_crowdfunding
+                            description = ' . $locallangDbXlf . ':tx_crowdfunding_domain_model_crowdfunding.description
+                            tt_content_defValues {
+                                CType = list
+                                list_type = crowdfunding_crowdfunding
+                            }
                         }
                     }
+                    show = *
                 }
-                show = *
-            }
-       }'
-    );
+        }'
+        );
     }
 );

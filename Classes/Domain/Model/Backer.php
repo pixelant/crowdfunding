@@ -128,24 +128,30 @@ class Backer extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         $this->transactions->detach($transactionToRemove);
     }
 
+    // @codingStandardsIgnoreStart
     /**
      * Returns the transactions
      *
      * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Transaction> $transactions
      */
+    // @codingStandardsIgnoreEnd
     public function getTransactions()
     {
         return $this->transactions;
     }
 
+    // @codingStandardsIgnoreStart
     /**
      * Sets the transactions
-     *
+     * 
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\Crowdfunding\Domain\Model\Transaction> $transactions
+     * 
      * @return void
      */
+    // @codingStandardsIgnoreEnd
     public function setTransactions(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $transactions)
     {
+        
         $this->transactions = $transactions;
     }
 }

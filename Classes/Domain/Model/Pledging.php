@@ -135,8 +135,14 @@ class Pledging extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 )
                 ->from('tx_crowdfunding_domain_model_transaction')
                 ->where(
-                    $queryBuilder->expr()->eq('pledging_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->eq('state', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'pledging_id',
+                        $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)
+                    ),
+                    $queryBuilder->expr()->eq(
+                        'state',
+                        $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
+                    )
                 )
                 ->groupBy('pledging_id')
                 ->execute()

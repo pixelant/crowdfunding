@@ -355,8 +355,14 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 )
                 ->from('tx_crowdfunding_domain_model_transaction')
                 ->where(
-                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->eq('state', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'campaign_id',
+                        $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)
+                    ),
+                    $queryBuilder->expr()->eq(
+                        'state',
+                        $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
+                    )
                 )
                 ->groupBy('campaign_id')
                 ->execute()
@@ -456,8 +462,14 @@ class Campaign extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 ->count('uid')
                 ->from('tx_crowdfunding_domain_model_transaction')
                 ->where(
-                    $queryBuilder->expr()->eq('campaign_id', $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->eq('state', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'campaign_id',
+                        $queryBuilder->createNamedParameter($this->uid, \PDO::PARAM_INT)
+                    ),
+                    $queryBuilder->expr()->eq(
+                        'state',
+                        $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
+                    )
                 )
                 ->execute()
                 ->fetchColumn(0);

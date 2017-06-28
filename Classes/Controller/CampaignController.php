@@ -165,7 +165,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $amount  = $_POST['amount'];
         $email = $token['email'];
         $checksum = $_POST['checksum'];
-        $state = 0; 
+        $state = 0;
         $status = '';
         $e = null;
 
@@ -228,7 +228,9 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $status = $charge->getLastResponse()->body;
             $responseData['success'] = 1;
             $amountStr = CrowdfundingUtility::formatCurrency($amount);
-            $responseData['message'] =  LocalizationUtility::translate('label.chargeSuccess', 'Crowdfunding') . ' ' . $amountStr;
+            $responseData['message'] =
+                LocalizationUtility::translate('label.chargeSuccess', 'Crowdfunding') .
+                ' ' . $amountStr;
         } catch (\Stripe\Error\Card $e) {
             // Since it's a decline, \Stripe\Error\Card will be caught
             $responseData['success'] = 0;
@@ -581,7 +583,9 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function logError($message)
     {
         /** @var $logger \TYPO3\CMS\Core\Log\Logger */
-        $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+        $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            'TYPO3\CMS\Core\Log\LogManager'
+        )->getLogger(__CLASS__);
         $data['requestUri'] = $this->request->getRequestUri();
         $data['method'] = $this->request->getMethod();
         $data['get'] = $_GET;
@@ -595,7 +599,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         if (!empty($this->settings['adminEmail'])) {
             $subject = LocalizationUtility::translate('errormail.subject', 'Crowdfunding');
             $recievers = GeneralUtility::trimExplode(',', $this->settings['adminEmail']);
-            if (is_array($recievers) && count($recievers) > 0 ) {
+            if (is_array($recievers) && count($recievers) > 0) {
                 $mail = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Mail\\MailMessage');
                 $mail->setSubject('An error was logged in Crowdfounding extension');
                 $mail->setTo($recievers);
