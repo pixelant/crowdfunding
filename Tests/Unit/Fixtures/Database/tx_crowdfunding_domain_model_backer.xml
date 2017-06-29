@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <tx_crowdfunding_domain_model_backer>
+        <uid>1</uid>
+        <pid>0</pid>
+        <email>backer@test.com</email>
+        <name>Backer Doe</name>
+        <transactions>0</transactions>
+        <tstamp>1498479165</tstamp>
+        <crdate>1366642540</crdate>
+        <cruser_id>0</cruser_id>
+        <sys_language_uid>0</sys_language_uid>
+        <l10n_parent>0</l10n_parent>
+        <l10n_diffsource></l10n_diffsource>
+        <l10n_state></l10n_state>
+    </tx_crowdfunding_domain_model_backer>
+</dataset>

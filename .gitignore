@@ -8,3 +8,4 @@
 /.Build/*
 composer.lock
 /vendor
+/code-coverage/*

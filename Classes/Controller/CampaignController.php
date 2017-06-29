@@ -461,6 +461,10 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getBacker($email)
     {
+        if (!is_string($email) || empty($email)) {
+            throw new \Exception("Email cannot be empty");
+        }
+
         // TODO: check storagepid, seems not to find any record when call is from js (ajax)
         $backer = $this->backerRepository->findOneByEmail($email);
         if (!$backer instanceof \Pixelant\Crowdfunding\Domain\Model\Backer) {
