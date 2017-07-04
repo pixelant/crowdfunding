@@ -30,7 +30,6 @@ class CampaignControllerTest extends \Nimut\TestingFramework\TestCase\UnitTestCa
     {
         parent::setUp();
         $this->subject = $this->getAccessibleMock(CampaignController::class, ['dummy', 'buildUriAjax']);
-
     }
 
     protected function tearDown()
@@ -81,7 +80,6 @@ class CampaignControllerTest extends \Nimut\TestingFramework\TestCase\UnitTestCa
             $jsVariables['stripe']['secretKey'],
             'The setting stripe.secretKey should never be added to jsVariables'
         );
-
     }
 
     /**
