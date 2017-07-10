@@ -113,14 +113,16 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
             return json_encode([
                 'success' => 0,
-                'message' => 'Invalid request'
+                'message' => 'Invalid request',
+                'code' => 101
             ]);
         }
         // simple check of $_SERVER['HTTP_REFERER']
         if (!$this->checkReferer()) {
             return json_encode([
                 'success' => 0,
-                'message' => 'Invalid request'
+                'message' => 'Invalid request',
+                'code' => 102
             ]);
         }
 
@@ -139,6 +141,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         } else {
             $responseData['success'] = 0;
             $responseData['message'] = 'Unknown method (' . $ajaxFunction . ')';
+            $responseData['code'] = 103;
         }
         return json_encode($responseData);
     }
@@ -378,7 +381,7 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $responseData['success'] = 1;
             $responseData['message'] = $checksum;
         } catch (\Exception $e) {
-            $responseData['success'] = 1;
+            $responseData['success'] = 0;
             $responseData['message'] = $e->getMessage();
         }
         return $responseData;
@@ -533,13 +536,14 @@ class CampaignController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function getChecksum($campaignId, $pledgeId, $amount)
     {
         $campaign = $this->getCampaign($campaignId);
-        $pledge = $this->getCampaignPledge($campaign, $pledgeId);
         $checksum = '';
 
         // check if a campaign is found
         if (!$campaign) {
             throw new \Exception("Cannot generate checksum without a valid campaign");
         }
+
+        $pledge = $this->getCampaignPledge($campaign, $pledgeId);
 
         // check that amount is equal to pledge amount if pledge is set
         if ($pledge && $amount != $pledge->getAmount()) {

@@ -287,4 +287,40 @@ class CampaignTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 
         $this->subject->removeBacker($backer);
     }
+
+    /**
+     * @test
+     */
+    public function getCrdateReturnsInitialValueForInt()
+    {
+        self::assertSame(
+            null,
+            $this->subject->getCrdate()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function getMinAmountReturnsInitialValueForFloat()
+    {
+        self::assertSame(
+            0.0,
+            $this->subject->getMinAmount()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function setMinAmountForFloatSetsMinAmount()
+    {
+        $this->subject->setMinAmount(19.10);
+
+        self::assertAttributeEquals(
+            19.10,
+            'minAmount',
+            $this->subject
+        );
+    }
 }
