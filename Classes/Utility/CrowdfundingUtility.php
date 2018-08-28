@@ -58,12 +58,12 @@ class CrowdfundingUtility
     {
         $settings = self::getSettings();
         $currencySettings = $settings['currency'];
-        
+
         $currencySign = $currencySettings['currencySign'];
         $decimalSeparator = $currencySettings['decimalSeparator'];
         $thousandsSeparator = $currencySettings['thousandsSeparator'];
-        $prependCurrency = $currencySettings['prependCurrency'];
-        $separateCurrency = $currencySettings['separateCurrency'];
+        $prependCurrency = (bool)$currencySettings['prependCurrency'];
+        $separateCurrency = (bool)$currencySettings['separateCurrency'];
         $decimals = $currencySettings['decimals'];
 
         if (empty($thousandsSeparator)) {

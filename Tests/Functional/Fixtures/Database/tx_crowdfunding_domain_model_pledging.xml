@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+	<tx_crowdfunding_domain_model_pledging>
+		<uid>1</uid>
+		<pid>132</pid>
+		<campaign>2</campaign>
+		<title>Early access</title>
+		<description>&lt;ul&gt; 	&lt;li&gt;You will get access to beta versions&lt;/li&gt; &lt;/ul&gt;</description>
+		<amount>100</amount>
+		<tstamp>1498032517</tstamp>
+		<crdate>1497274605</crdate>
+		<cruser_id>1</cruser_id>
+		<deleted>0</deleted>
+		<hidden>0</hidden>
+		<starttime>1497274560</starttime>
+		<endtime>0</endtime>
+		<sys_language_uid>0</sys_language_uid>
+		<l10n_parent>0</l10n_parent>
+		<l10n_diffsource>...</l10n_diffsource>
+		<l10n_state>NULL</l10n_state>
+	</tx_crowdfunding_domain_model_pledging>
+
+	<tx_crowdfunding_domain_model_pledging>
+		<uid>2</uid>
+		<pid>132</pid>
+		<campaign>2</campaign>
+		<title>Earlier access</title>
+		<description>&lt;ul&gt; 	&lt;li&gt;You will get access to alpha&amp;nbsp;versions&lt;/li&gt; 	&lt;li&gt;You will get access to beta versions&lt;/li&gt; &lt;/ul&gt;</description>
+		<amount>500</amount>
+		<tstamp>1498032517</tstamp>
+		<crdate>1497274649</crdate>
+		<cruser_id>1</cruser_id>
+		<deleted>0</deleted>
+		<hidden>0</hidden>
+		<starttime>1497274620</starttime>
+		<endtime>0</endtime>
+		<sys_language_uid>0</sys_language_uid>
+		<l10n_parent>0</l10n_parent>
+		<l10n_diffsource>...</l10n_diffsource>
+		<l10n_state>NULL</l10n_state>
+	</tx_crowdfunding_domain_model_pledging>
+</dataset>

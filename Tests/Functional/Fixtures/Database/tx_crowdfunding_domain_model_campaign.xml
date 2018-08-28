@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <tx_crowdfunding_domain_model_campaign>
+        <uid>1</uid>
+        <pid>1</pid>
+        <title>The first campaign</title>
+        <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat quam lorem, nec elementum elit scelerisque in. Mauris sed tellus vel purus bibendum tristique. Aliquam euismod, eros dictum varius dictum, risus enim egestas ex, ac ornare neque lectus eget neque. Vivamus imperdiet, ligula sed lacinia rhoncus, enim mauris finibus lacus, sit amet suscipit erat eros accumsan nunc. Nulla bibendum odio at risus commodo, id scelerisque turpis cursus. Duis in molestie lectus, placerat porttitor tortor. Pellentesque placerat luctus venenatis. Nullam facilisis lorem lobortis nibh sagittis faucibus.
+
+Maecenas tempor mi eu tellus sodales posuere. Donec eget congue augue. Aliquam porttitor maximus felis. Ut nec tellus nec magna accumsan convallis quis at erat. Aenean et iaculis diam, a finibus erat. Donec ac hendrerit risus. Duis vel condimentum justo. Aliquam interdum nunc a est fermentum vulputate. Curabitur lectus libero, accumsan pellentesque volutpat id, fringilla a massa. Donec at velit ante. Nulla rutrum lorem id varius vestibulum. Phasellus in est consequat, feugiat ex vel, aliquam ipsum. Vestibulum at posuere eros.</description>
+        <pledged>50000</pledged>
+        <pledges>0</pledges>
+        <goals>0</goals>
+        <backers>0</backers>
+        <tstamp>1497256748</tstamp>
+        <crdate>1497255884</crdate>
+        <cruser_id>1</cruser_id>
+        <deleted>0</deleted>
+        <hidden>0</hidden>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <sorting>256</sorting>
+        <sys_language_uid>0</sys_language_uid>
+        <l10n_parent>0</l10n_parent>
+        <l10n_diffsource>...</l10n_diffsource>
+        <l10n_state>NULL</l10n_state>
+        <categories>0</categories>
+        <min_amount>50</min_amount>
+    </tx_crowdfunding_domain_model_campaign>
+    <tx_crowdfunding_domain_model_campaign>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>The second campaign.</title>
+        <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse feugiat quam lorem, nec elementum elit scelerisque in. Mauris sed tellus vel purus bibendum tristique. Aliquam euismod, eros dictum varius dictum, risus enim egestas ex, ac ornare neque lectus eget neque. Vivamus imperdiet, ligula sed lacinia rhoncus, enim mauris finibus lacus, sit amet suscipit erat eros accumsan nunc. Nulla bibendum odio at risus commodo, id scelerisque turpis cursus. Duis in molestie lectus, placerat porttitor tortor. Pellentesque placerat luctus venenatis. Nullam facilisis lorem lobortis nibh sagittis faucibus.
+
+Maecenas tempor mi eu tellus sodales posuere. Donec eget congue augue. Aliquam porttitor maximus felis. Ut nec tellus nec magna accumsan convallis quis at erat. Aenean et iaculis diam, a finibus erat. Donec ac hendrerit risus. Duis vel condimentum justo. Aliquam interdum nunc a est fermentum vulputate. Curabitur lectus libero, accumsan pellentesque volutpat id, fringilla a massa. Donec at velit ante. Nulla rutrum lorem id varius vestibulum. Phasellus in est consequat, feugiat ex vel, aliquam ipsum. Vestibulum at posuere eros.
+
+Vestibulum at posuere eros.</description>
+        <pledged>20000</pledged>
+        <pledges>2</pledges>
+        <goals>2</goals>
+        <backers>1</backers>
+        <tstamp>1498479165</tstamp>
+        <crdate>1497255888</crdate>
+        <cruser_id>1</cruser_id>
+        <deleted>0</deleted>
+        <hidden>0</hidden>
+        <starttime>0</starttime>
+        <endtime>0</endtime>
+        <sorting>128</sorting>
+        <sys_language_uid>0</sys_language_uid>
+        <l10n_parent>0</l10n_parent>
+        <l10n_diffsource>...</l10n_diffsource>
+        <l10n_state>NULL</l10n_state>
+        <categories>0</categories>
+        <min_amount>10</min_amount>
+    </tx_crowdfunding_domain_model_campaign>
+</dataset>

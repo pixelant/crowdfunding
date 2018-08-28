@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <tx_crowdfunding_domain_model_goal>
+        <uid>1</uid>
+        <pid>132</pid>
+        <campaign>2</campaign>
+        <title>Minimum to be able to create a working extension</title>
+        <description>&lt;p&gt;basic functionallity&lt;/p&gt;
+&lt;ul&gt; 	&lt;li&gt;feature 1&lt;/li&gt; 	&lt;li&gt;feature 2&lt;/li&gt; 	&lt;li&gt;feature 3&lt;/li&gt; 	&lt;li&gt;feature 4&lt;/li&gt; &lt;/ul&gt;</description>
+        <amount>50000</amount>
+        <tstamp>1498032517</tstamp>
+        <crdate>1497271947</crdate>
+        <cruser_id>1</cruser_id>
+        <deleted>0</deleted>
+        <hidden>0</hidden>
+        <starttime>1497271920</starttime>
+        <endtime>0</endtime>
+        <sys_language_uid>0</sys_language_uid>
+        <l10n_parent>0</l10n_parent>
+        <l10n_diffsource>...</l10n_diffsource>
+        <l10n_state>NULL</l10n_state>
+    </tx_crowdfunding_domain_model_goal>
+    <tx_crowdfunding_domain_model_goal>
+        <uid>2</uid>
+        <pid>132</pid>
+        <campaign>2</campaign>
+        <title>With some extra nice to have features</title>
+        <description>&lt;ul&gt; 	&lt;li&gt;extra feature 1&lt;/li&gt; 	&lt;li&gt;extra feature 2&lt;/li&gt; 	&lt;li&gt;extra feature 3&lt;/li&gt; &lt;/ul&gt;</description>
+        <amount>75000</amount>
+        <tstamp>1498032517</tstamp>
+        <crdate>1497274529</crdate>
+        <cruser_id>1</cruser_id>
+        <deleted>0</deleted>
+        <hidden>0</hidden>
+        <starttime>1497274500</starttime>
+        <endtime>0</endtime>
+        <sys_language_uid>0</sys_language_uid>
+        <l10n_parent>0</l10n_parent>
+        <l10n_diffsource>...</l10n_diffsource>
+        <l10n_state>NULL</l10n_state>
+    </tx_crowdfunding_domain_model_goal>
+</dataset>
